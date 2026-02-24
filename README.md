@@ -1,6 +1,10 @@
 # pdf_reader
 
-A new PDF reader project.
+A new PDF reader project.支持PDF、Markdown、docx、ppt、xlsx等文档的预览
+
+## PDF editor
+
+> https://github.com/ShizukuIchi/pdf-editor
 
 ## Getting Started
 
