@@ -17,7 +17,7 @@ class MainActivity : FlutterActivity() {
         private const val CHANNEL = "com.pdf_reader/pdf_reader"
         private const val REQUEST_PICK_TREE = 9001
         private val SUPPORTED_EXT = setOf(
-            "pdf", "doc", "docx", "ppt", "pptx", "txt", "md", "markdown"
+            "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "md", "markdown"
         )
     }
 

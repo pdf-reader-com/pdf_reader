@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:docx_file_viewer/docx_file_viewer.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -302,6 +303,8 @@ class _ReaderHomePageState extends State<ReaderHomePage> {
         return FileType.pdf;
       case '.doc':
       case '.docx':
+      case '.xls':
+      case '.xlsx':
       case '.ppt':
       case '.pptx':
         return FileType.doc;
@@ -687,11 +690,22 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
           },
         );
       case FileType.doc:
+        final ext = p.extension(file.name).toLowerCase();
+        if (ext == '.docx') {
+          return DocxViewWithSearch(
+            file: File(path),
+            config: DocxViewConfig(
+              enableSearch: true,
+              enableZoom: true,
+              theme: DocxViewTheme.light(),
+            ),
+          );
+        }
         return Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              '暂不支持直接预览此类文档（Word / PowerPoint 等）。\n'
+              '暂不支持直接预览此类文档。\n'
               '可以点击右上角“更多”选择使用其他应用打开。',
               textAlign: TextAlign.center,
             ),
