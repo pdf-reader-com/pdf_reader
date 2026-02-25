@@ -3,6 +3,7 @@ import 'package:pdf_reader/l10n/app_localizations.dart';
 
 import '../main.dart';
 import 'language_settings_page.dart';
+import 'theme_settings_page.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -29,6 +30,18 @@ class SettingsPage extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (_) => const LanguageSettingsPage(),
+              ),
+            );
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.color_lens),
+          title: Text(l.settingsThemeTitle),
+          subtitle: Text(l.settingsThemeSubtitle),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const ThemeSettingsPage(),
               ),
             );
           },

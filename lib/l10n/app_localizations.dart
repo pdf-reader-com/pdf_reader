@@ -444,6 +444,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use system language (fall back to English if unsupported)'**
   String get languageFollowSystemSubtitle;
+
+  /// No description provided for @settingsThemeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsThemeTitle;
+
+  /// No description provided for @settingsThemeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme and colors'**
+  String get settingsThemeSubtitle;
+
+  /// No description provided for @themeSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get themeSettingsTitle;
+
+  /// No description provided for @themeFollowSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow system'**
+  String get themeFollowSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
+  /// No description provided for @themeColorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary color'**
+  String get themeColorTitle;
+
+  /// No description provided for @themeColorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Accent color for interface'**
+  String get themeColorSubtitle;
 }
 
 class _AppLocalizationsDelegate

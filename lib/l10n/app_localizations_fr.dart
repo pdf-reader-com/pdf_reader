@@ -184,4 +184,28 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get languageFollowSystemSubtitle =>
       'Use system language (fall back to English if unsupported)';
+
+  @override
+  String get settingsThemeTitle => 'Appearance';
+
+  @override
+  String get settingsThemeSubtitle => 'Theme and colors';
+
+  @override
+  String get themeSettingsTitle => 'Appearance';
+
+  @override
+  String get themeFollowSystem => 'Follow system';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get themeColorTitle => 'Primary color';
+
+  @override
+  String get themeColorSubtitle => 'Accent color for interface';
 }

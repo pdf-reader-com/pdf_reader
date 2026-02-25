@@ -61,5 +61,13 @@
   "settingsLanguageSubtitle": "界面语言",
   "languageSettingsTitle": "语言设置",
   "languageFollowSystem": "跟随系统",
-  "languageFollowSystemSubtitle": "使用系统语言（无匹配时显示英语）"
+  "languageFollowSystemSubtitle": "使用系统语言（无匹配时显示英语）",
+  "settingsThemeTitle": "外观与主题",
+  "settingsThemeSubtitle": "暗色 / 浅色模式与配色",
+  "themeSettingsTitle": "外观与主题",
+  "themeFollowSystem": "跟随系统",
+  "themeLight": "浅色模式",
+  "themeDark": "深色模式",
+  "themeColorTitle": "主题配色",
+  "themeColorSubtitle": "界面主色和强调色"
 }

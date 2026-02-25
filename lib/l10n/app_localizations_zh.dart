@@ -174,6 +174,30 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get languageFollowSystemSubtitle => '使用系统语言（无匹配时显示英语）';
+
+  @override
+  String get settingsThemeTitle => '外观与主题';
+
+  @override
+  String get settingsThemeSubtitle => '暗色 / 浅色模式与配色';
+
+  @override
+  String get themeSettingsTitle => '外观与主题';
+
+  @override
+  String get themeFollowSystem => '跟随系统';
+
+  @override
+  String get themeLight => '浅色模式';
+
+  @override
+  String get themeDark => '深色模式';
+
+  @override
+  String get themeColorTitle => '主题配色';
+
+  @override
+  String get themeColorSubtitle => '界面主色和强调色';
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).

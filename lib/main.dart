@@ -20,15 +20,22 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   static const _prefsKeyLocale = 'app_locale';
+  static const _prefsKeyThemeMode = 'app_theme_mode';
+  static const _prefsKeyThemeSeedColor = 'app_theme_seed_color';
 
   Locale? _overrideLocale;
+  ThemeMode _themeMode = ThemeMode.system;
+  Color _seedColor = Colors.blue;
 
   Locale? get overrideLocale => _overrideLocale;
+  ThemeMode get themeMode => _themeMode;
+  Color get seedColor => _seedColor;
 
   @override
   void initState() {
     super.initState();
     _loadSavedLocale();
+    _loadSavedTheme();
   }
 
   Future<void> _loadSavedLocale() async {
@@ -65,14 +72,76 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Future<void> _loadSavedTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    final modeIndex = prefs.getInt(_prefsKeyThemeMode);
+    final colorValue = prefs.getInt(_prefsKeyThemeSeedColor);
+
+    setState(() {
+      _themeMode = _decodeThemeMode(modeIndex);
+      _seedColor = colorValue != null ? Color(colorValue) : Colors.blue;
+    });
+  }
+
+  ThemeMode _decodeThemeMode(int? index) {
+    switch (index) {
+      case 1:
+        return ThemeMode.light;
+      case 2:
+        return ThemeMode.dark;
+      case 0:
+      default:
+        return ThemeMode.system;
+    }
+  }
+
+  int _encodeThemeMode(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.light:
+        return 1;
+      case ThemeMode.dark:
+        return 2;
+      case ThemeMode.system:
+      default:
+        return 0;
+    }
+  }
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_prefsKeyThemeMode, _encodeThemeMode(mode));
+    setState(() {
+      _themeMode = mode;
+    });
+  }
+
+  Future<void> setSeedColor(Color color) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_prefsKeyThemeSeedColor, color.value);
+    setState(() {
+      _seedColor = color;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: _seedColor,
+          brightness: Brightness.light,
+        ),
         useMaterial3: true,
       ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: _seedColor,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+      ),
+      themeMode: _themeMode,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
