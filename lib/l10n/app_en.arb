@@ -55,5 +55,11 @@
   "toolsTranslateFile": "Translate current file",
   "toolsTranslateFileSubtitle": "Use external services to translate content",
   "toolsReadingSettings": "Reading settings",
-  "toolsReadingSettingsSubtitle": "Font size, theme, page turning mode, etc."
+  "toolsReadingSettingsSubtitle": "Font size, theme, page turning mode, etc.",
+  "settingsTitle": "Settings",
+  "settingsLanguageTitle": "Language",
+  "settingsLanguageSubtitle": "Interface language",
+  "languageSettingsTitle": "Language",
+  "languageFollowSystem": "Follow system",
+  "languageFollowSystemSubtitle": "Use system language (fall back to English if unsupported)"
 }

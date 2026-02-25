@@ -5,11 +5,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_ar.dart';
 import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
 import 'app_localizations_fr.dart';
 import 'app_localizations_it.dart';
+import 'app_localizations_ja.dart';
+import 'app_localizations_ko.dart';
+import 'app_localizations_ru.dart';
 import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
@@ -98,11 +102,15 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
     Locale('de'),
     Locale('en'),
     Locale('es'),
     Locale('fr'),
     Locale('it'),
+    Locale('ja'),
+    Locale('ko'),
+    Locale('ru'),
     Locale('zh'),
     Locale('zh', 'TW'),
   ];
@@ -400,6 +408,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Font size, theme, page turning mode, etc.'**
   String get toolsReadingSettingsSubtitle;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @settingsLanguageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get settingsLanguageTitle;
+
+  /// No description provided for @settingsLanguageSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Interface language'**
+  String get settingsLanguageSubtitle;
+
+  /// No description provided for @languageSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageSettingsTitle;
+
+  /// No description provided for @languageFollowSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow system'**
+  String get languageFollowSystem;
+
+  /// No description provided for @languageFollowSystemSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use system language (fall back to English if unsupported)'**
+  String get languageFollowSystemSubtitle;
 }
 
 class _AppLocalizationsDelegate
@@ -413,11 +457,15 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) => <String>[
+    'ar',
     'de',
     'en',
     'es',
     'fr',
     'it',
+    'ja',
+    'ko',
+    'ru',
     'zh',
   ].contains(locale.languageCode);
 
@@ -440,6 +488,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'ar':
+      return AppLocalizationsAr();
     case 'de':
       return AppLocalizationsDe();
     case 'en':
@@ -450,6 +500,12 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsFr();
     case 'it':
       return AppLocalizationsIt();
+    case 'ja':
+      return AppLocalizationsJa();
+    case 'ko':
+      return AppLocalizationsKo();
+    case 'ru':
+      return AppLocalizationsRu();
     case 'zh':
       return AppLocalizationsZh();
   }

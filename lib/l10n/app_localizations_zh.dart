@@ -156,6 +156,24 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get toolsReadingSettingsSubtitle => '字体大小、主题、翻页方式等';
+
+  @override
+  String get settingsTitle => '设置';
+
+  @override
+  String get settingsLanguageTitle => '语言设置';
+
+  @override
+  String get settingsLanguageSubtitle => '界面语言';
+
+  @override
+  String get languageSettingsTitle => '语言设置';
+
+  @override
+  String get languageFollowSystem => '跟随系统';
+
+  @override
+  String get languageFollowSystemSubtitle => '使用系统语言（无匹配时显示英语）';
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).

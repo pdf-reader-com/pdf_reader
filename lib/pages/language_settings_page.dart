@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pdf_reader/l10n/app_localizations.dart';
 
 import '../main.dart';
 
@@ -7,9 +8,11 @@ class LanguageSettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('语言设置'),
+        title: Text(l.languageSettingsTitle),
         centerTitle: true,
       ),
       body: ListView(
@@ -17,8 +20,8 @@ class LanguageSettingsPage extends StatelessWidget {
         children: [
           ListTile(
             leading: const Icon(Icons.phone_iphone),
-            title: const Text('跟随系统'),
-            subtitle: const Text('使用系统语言（无匹配时显示英语）'),
+            title: Text(l.languageFollowSystem),
+            subtitle: Text(l.languageFollowSystemSubtitle),
             onTap: () {
               MyApp.of(context)?.setLocale(null);
             },

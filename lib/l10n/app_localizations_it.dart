@@ -167,4 +167,23 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get toolsReadingSettingsSubtitle =>
       'Dimensione del carattere, tema, modalità di scorrimento, ecc.';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsLanguageTitle => 'Language';
+
+  @override
+  String get settingsLanguageSubtitle => 'Interface language';
+
+  @override
+  String get languageSettingsTitle => 'Language';
+
+  @override
+  String get languageFollowSystem => 'Follow system';
+
+  @override
+  String get languageFollowSystemSubtitle =>
+      'Use system language (fall back to English if unsupported)';
 }

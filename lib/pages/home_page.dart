@@ -300,7 +300,7 @@ class _ReaderHomePageState extends State<ReaderHomePage> {
         body = const ToolsPage();
         break;
       case 4:
-        title = '设置';
+        title = l.settingsTitle;
         body = const SettingsPage();
         break;
       default:
@@ -366,10 +366,10 @@ class _ReaderHomePageState extends State<ReaderHomePage> {
             selectedIcon: const Icon(Icons.build),
             label: l.tabTools,
           ),
-          const NavigationDestination(
-            icon: Icon(Icons.settings_outlined),
-            selectedIcon: Icon(Icons.settings),
-            label: '设置',
+          NavigationDestination(
+            icon: const Icon(Icons.settings_outlined),
+            selectedIcon: const Icon(Icons.settings),
+            label: l.settingsTitle,
           ),
         ],
       ),

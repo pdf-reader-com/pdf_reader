@@ -1,0 +1,183 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Arabic (`ar`).
+class AppLocalizationsAr extends AppLocalizations {
+  AppLocalizationsAr([String locale = 'ar']) : super(locale);
+
+  @override
+  String get appTitle => 'قارئ المستندات';
+
+  @override
+  String get tabAllFiles => 'كل الملفات';
+
+  @override
+  String get tabRecent => 'الأخيرة';
+
+  @override
+  String get tabBookmarks => 'الإشارات المرجعية';
+
+  @override
+  String get tabTools => 'الأدوات';
+
+  @override
+  String get filterAll => 'الكل';
+
+  @override
+  String get filterPdf => 'PDF';
+
+  @override
+  String get filterDoc => 'المستندات';
+
+  @override
+  String get filterTxt => 'نص';
+
+  @override
+  String get filterMarkdown => 'Markdown';
+
+  @override
+  String get sectionTitleAllFiles => 'كل الملفات';
+
+  @override
+  String get sectionTitleRecent => 'تم فتحها مؤخرًا';
+
+  @override
+  String get sectionTitleBookmarks => 'الملفات ذات الإشارات المرجعية';
+
+  @override
+  String get emptyFiles =>
+      'لا توجد ملفات بعد.\n\nيمكنك الضغط على زر المجلد في أعلى اليمين لمسح مجلد.';
+
+  @override
+  String get scanTooltip => 'مسح الملفات في مجلد';
+
+  @override
+  String get scanProgress => 'جارٍ مسح الملفات، يرجى الانتظار…';
+
+  @override
+  String scanIndexedCount(int count) {
+    return 'تم فهرسة $count من الملفات';
+  }
+
+  @override
+  String get scanFailed => 'فشل المسح';
+
+  @override
+  String get fileTypePdf => 'PDF';
+
+  @override
+  String get fileTypeDoc => 'مستند';
+
+  @override
+  String get fileTypeTxt => 'نص';
+
+  @override
+  String get fileTypeMarkdown => 'Markdown';
+
+  @override
+  String get fileTypeOther => 'أخرى';
+
+  @override
+  String get bookmark => 'إشارة مرجعية';
+
+  @override
+  String get share => 'مشاركة';
+
+  @override
+  String get shareTodo => 'ميزة المشاركة قيد التنفيذ';
+
+  @override
+  String get more => 'المزيد';
+
+  @override
+  String get loadFailed => 'فشل التحميل';
+
+  @override
+  String get cannotResolvePath => 'تعذّر حل مسار الملف';
+
+  @override
+  String get loadMarkdownFailed => 'فشل تحميل Markdown';
+
+  @override
+  String get loadTextFailed => 'فشل تحميل النص';
+
+  @override
+  String get previewUnsupportedDoc =>
+      'معاينة هذا النوع من المستندات غير مدعومة بعد.\nيمكنك الضغط على \"المزيد\" في أعلى اليمين لفتحه بواسطة تطبيق آخر.';
+
+  @override
+  String get previewUnsupportedFile =>
+      'معاينة هذا النوع من الملفات غير مدعومة.\n\nالمسار:';
+
+  @override
+  String get moreOpenWithOther => 'فتح باستخدام تطبيق آخر';
+
+  @override
+  String get moreOpenWithOtherTodo => 'ميزة الفتح الخارجي قيد التنفيذ';
+
+  @override
+  String get moreExportConvert => 'تصدير / تحويل';
+
+  @override
+  String get moreExportConvertTodo => 'ميزة التصدير والتحويل قيد التنفيذ';
+
+  @override
+  String get moreDelete => 'حذف الملف';
+
+  @override
+  String get moreDeleteTodo => 'ميزة الحذف قيد التنفيذ';
+
+  @override
+  String get toolsTitle => 'الأدوات';
+
+  @override
+  String get toolsSubtitle => 'إجراء عمليات مختلفة على الملفات (عرض تجريبي)';
+
+  @override
+  String get toolsMergePdf => 'دمج ملفات PDF';
+
+  @override
+  String get toolsMergePdfSubtitle => 'اختر عدة ملفات PDF وادمجها في ملف واحد';
+
+  @override
+  String get toolsExtractText => 'استخراج النص';
+
+  @override
+  String get toolsExtractTextSubtitle => 'استخراج النص من ملفات PDF / الصور';
+
+  @override
+  String get toolsTranslateFile => 'ترجمة الملف الحالي';
+
+  @override
+  String get toolsTranslateFileSubtitle =>
+      'استخدام خدمات خارجية لترجمة المحتوى';
+
+  @override
+  String get toolsReadingSettings => 'إعدادات القراءة';
+
+  @override
+  String get toolsReadingSettingsSubtitle =>
+      'حجم الخط، النمط، طريقة التقليب، وغير ذلك';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsLanguageTitle => 'Language';
+
+  @override
+  String get settingsLanguageSubtitle => 'Interface language';
+
+  @override
+  String get languageSettingsTitle => 'Language';
+
+  @override
+  String get languageFollowSystem => 'Follow system';
+
+  @override
+  String get languageFollowSystemSubtitle =>
+      'Use system language (fall back to English if unsupported)';
+}
