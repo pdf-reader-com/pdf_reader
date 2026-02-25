@@ -23,6 +23,8 @@ class _MyAppState extends State<MyApp> {
 
   Locale? _overrideLocale;
 
+  Locale? get overrideLocale => _overrideLocale;
+
   @override
   void initState() {
     super.initState();
