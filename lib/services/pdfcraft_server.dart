@@ -6,12 +6,14 @@ import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_static/shelf_static.dart';
 
-/// 内置 HTTP 服务，用于托管 assets/pdfcraft 下的静态页面（PDFCraft 工具站）。
+/// 内置 HTTP 服务，用于托管 pdfcraft 静态页面（PDFCraft 工具站）。
 class PdfCraftServer {
   PdfCraftServer._();
 
@@ -28,7 +30,8 @@ class PdfCraftServer {
   /// 确保服务已启动。首次调用会启动 shelf 并托管 pdfcraft 资源。
   ///
   /// 由于 Flutter 资源打包在 APK/APP 内部，不能直接作为文件系统目录访问，
-  /// 这里会将 `assets/pdfcraft/` 下的所有资源解压到临时目录，再由 shelf_static 提供服务。
+  /// 这里会将 pdfcraft 静态站点解压到「应用自己的持久数据目录」，
+  /// 并缓存当前应用版本号，下次如果版本匹配则直接复用，无需重复解压。
   static Future<void> ensureStarted() async {
     if (_started) return;
     _started = true;
@@ -59,14 +62,49 @@ class PdfCraftServer {
     }
   }
 
-  /// 将 Flutter 资源包中的 pdfcraft 静态站点解压到临时目录，并返回该目录路径。
+  /// 将 Flutter 资源包中的 pdfcraft 静态站点解压到应用持久目录，并返回该目录路径。
   ///
-  /// 优先从一个打包好的 `assets/web/pdfcraft/pdfcraft.zip` 解压（参考 h5p 的 zip 方案），
-  /// 如果 zip 不存在，则回退到遍历 `assets/pdfcraft/` 目录的老方案。
+  /// - 优先从一个打包好的 `assets/web/pdfcraft/pdfcraft.zip` 解压（参考 h5p 的 zip 方案）；
+  /// - 如果 zip 不存在，则回退到遍历 `assets/pdfcraft/` 目录的老方案；
+  /// - 解压目标目录位于 `getApplicationSupportDirectory()/pdfcraft/content`；
+  /// - 同时在 `getApplicationSupportDirectory()/pdfcraft/version.txt` 中记录当前应用版本；
+  /// - 下次如果版本号一致且 content 目录存在，则直接复用，不再解压。
   static Future<String> _ensureAssetsExtracted() async {
     if (_assetsDirPath != null) return _assetsDirPath!;
 
-    // 1. 首选：从单一的 pdfcraft.zip 解压
+    // 0. 计算应用持久目录 & 当前版本号
+    final supportDir = await getApplicationSupportDirectory();
+    final rootDir = Directory(p.join(supportDir.path, 'pdfcraft'));
+    final contentDir = Directory(p.join(rootDir.path, 'content'));
+    final versionFile = File(p.join(rootDir.path, 'version.txt'));
+    await rootDir.create(recursive: true);
+
+    final packageInfo = await PackageInfo.fromPlatform();
+    final currentVersion = '${packageInfo.version}+${packageInfo.buildNumber}';
+
+    String? storedVersion;
+    if (await versionFile.exists()) {
+      storedVersion = (await versionFile.readAsString()).trim();
+    }
+
+    // 如果版本号一致且内容目录存在，则直接复用
+    if (storedVersion == currentVersion && await contentDir.exists()) {
+      _assetsDirPath = contentDir.path;
+      debugPrint(
+        'PdfCraftServer: reuse extracted assets at ${_assetsDirPath!} for version $currentVersion',
+      );
+      return _assetsDirPath!;
+    }
+
+    // 如需重新解压，则先清理旧内容
+    if (await contentDir.exists()) {
+      try {
+        await contentDir.delete(recursive: true);
+      } catch (_) {}
+    }
+    await contentDir.create(recursive: true);
+
+    // 1. 首选：从单一的 pdfcraft.zip 解压到持久 content 目录
     const zipAssetPath = 'assets/web/pdfcraft/pdfcraft.zip';
     try {
       final data = await rootBundle.load(zipAssetPath);
@@ -75,10 +113,9 @@ class PdfCraftServer {
           buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
       final archive = ZipDecoder().decodeBytes(bytes);
-      final dir = await Directory.systemTemp.createTemp('pdfcraft_zip_');
 
       for (final file in archive) {
-        final filename = p.join(dir.path, file.name);
+        final filename = p.join(contentDir.path, file.name);
         if (file.isFile) {
           final outFile = File(filename);
           await outFile.parent.create(recursive: true);
@@ -91,10 +128,11 @@ class PdfCraftServer {
         }
       }
 
-      _assetsDirPath = dir.path;
+      _assetsDirPath = contentDir.path;
       debugPrint(
-        'PdfCraftServer: extracted pdfcraft.zip to ${_assetsDirPath!}',
+        'PdfCraftServer: extracted pdfcraft.zip to ${_assetsDirPath!} for version $currentVersion',
       );
+      await versionFile.writeAsString(currentVersion, flush: true);
       return _assetsDirPath!;
     } catch (e, st) {
       // zip 不存在或解压失败时，打印日志并回退到旧实现
@@ -104,7 +142,7 @@ class PdfCraftServer {
       );
     }
 
-    // 2. 回退方案：从 AssetManifest 中找到所有 `assets/pdfcraft/` 开头的资源逐个写到临时目录
+    // 2. 回退方案：从 AssetManifest 中找到所有 `assets/pdfcraft/` 开头的资源逐个写到持久 content 目录
     const prefix = 'assets/pdfcraft/';
     final manifestJson = await rootBundle.loadString('AssetManifest.json');
     final Map<String, dynamic> manifest =
@@ -117,8 +155,7 @@ class PdfCraftServer {
 
     // 如果没有任何静态资源，则不要抛异常，生成一个简单的占位页面即可，避免整个功能崩溃。
     if (assetPaths.isEmpty) {
-      final dir = await Directory.systemTemp.createTemp('pdfcraft_empty_');
-      final file = File(p.join(dir.path, 'index.html'));
+      final file = File(p.join(contentDir.path, 'index.html'));
       await file.create(recursive: true);
       await file.writeAsString(
         '''
@@ -136,14 +173,13 @@ class PdfCraftServer {
 ''',
         flush: true,
       );
-      _assetsDirPath = dir.path;
+      _assetsDirPath = contentDir.path;
       debugPrint(
         'PdfCraftServer: no pdfcraft assets found, using placeholder page at ${_assetsDirPath!}',
       );
+      await versionFile.writeAsString(currentVersion, flush: true);
       return _assetsDirPath!;
     }
-
-    final dir = await Directory.systemTemp.createTemp('pdfcraft_assets_');
 
     for (final assetPath in assetPaths) {
       final data = await rootBundle.load(assetPath);
@@ -152,12 +188,13 @@ class PdfCraftServer {
           buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
       final relativePath = assetPath.substring(prefix.length);
-      final file = File(p.join(dir.path, relativePath));
+      final file = File(p.join(contentDir.path, relativePath));
       await file.parent.create(recursive: true);
       await file.writeAsBytes(bytes, flush: true);
     }
 
-    _assetsDirPath = dir.path;
+    _assetsDirPath = contentDir.path;
+    await versionFile.writeAsString(currentVersion, flush: true);
     return _assetsDirPath!;
   }
 }
