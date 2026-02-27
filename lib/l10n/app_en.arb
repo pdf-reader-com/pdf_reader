@@ -56,6 +56,8 @@
   "toolsTranslateFileSubtitle": "Use external services to translate content",
   "toolsReadingSettings": "Reading settings",
   "toolsReadingSettingsSubtitle": "Font size, theme, page turning mode, etc.",
+  "toolsPdfCraft": "PDFCraft",
+  "toolsPdfCraftSubtitle": "Built-in PDF tools (merge, split, convert, etc.)",
   "settingsTitle": "Settings",
   "settingsLanguageTitle": "Language",
   "settingsLanguageSubtitle": "Interface language",

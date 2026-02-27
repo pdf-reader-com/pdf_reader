@@ -166,7 +166,14 @@ class AppLocalizationsRu extends AppLocalizations {
       'Размер шрифта, тема, способ перелистывания и другое';
 
   @override
-  String get settingsTitle => 'Settings';
+  String get toolsPdfCraft => 'PDFCraft';
+
+  @override
+  String get toolsPdfCraftSubtitle =>
+      'Встроенные PDF-инструменты (объединение, разделение, конвертация и т.д.)';
+
+  @override
+  String get settingsTitle => 'Настройки';
 
   @override
   String get settingsLanguageTitle => 'Language';

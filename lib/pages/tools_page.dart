@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pdf_reader/l10n/app_localizations.dart';
+import 'package:pdf_reader/pages/pdfcraft_page.dart';
+import 'package:pdf_reader/services/pdfcraft_server.dart';
 
 class ToolsPage extends StatelessWidget {
   const ToolsPage({super.key});
@@ -19,6 +21,20 @@ class ToolsPage extends StatelessWidget {
           subtitle: Text(l.toolsSubtitle),
         ),
         const Divider(),
+        ListTile(
+          leading: const Icon(Icons.build_circle_outlined),
+          title: Text(l.toolsPdfCraft),
+          subtitle: Text(l.toolsPdfCraftSubtitle),
+          onTap: () async {
+            await PdfCraftServer.ensureStarted();
+            if (!context.mounted) return;
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => const PdfCraftPage(),
+              ),
+            );
+          },
+        ),
         ListTile(
           leading: const Icon(Icons.picture_as_pdf),
           title: Text(l.toolsMergePdf),

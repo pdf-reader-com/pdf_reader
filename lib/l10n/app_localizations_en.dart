@@ -166,6 +166,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Font size, theme, page turning mode, etc.';
 
   @override
+  String get toolsPdfCraft => 'PDFCraft';
+
+  @override
+  String get toolsPdfCraftSubtitle =>
+      'Built-in PDF tools (merge, split, convert, etc.)';
+
+  @override
   String get settingsTitle => 'Settings';
 
   @override

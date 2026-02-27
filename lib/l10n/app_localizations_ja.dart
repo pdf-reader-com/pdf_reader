@@ -159,7 +159,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get toolsReadingSettingsSubtitle => 'フォントサイズ、テーマ、ページ送り方法など';
 
   @override
-  String get settingsTitle => 'Settings';
+  String get toolsPdfCraft => 'PDFCraft';
+
+  @override
+  String get toolsPdfCraftSubtitle => '内蔵 PDF ツール（結合・分割・変換など）';
+
+  @override
+  String get settingsTitle => '設定';
 
   @override
   String get settingsLanguageTitle => 'Language';

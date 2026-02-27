@@ -55,5 +55,8 @@
   "toolsTranslateFile": "翻譯目前檔案",
   "toolsTranslateFileSubtitle": "呼叫外部服務對內容進行翻譯",
   "toolsReadingSettings": "閱讀設定",
-  "toolsReadingSettingsSubtitle": "字型大小、主題、翻頁方式等"
+  "toolsReadingSettingsSubtitle": "字型大小、主題、翻頁方式等",
+  "toolsPdfCraft": "PDFCraft",
+  "toolsPdfCraftSubtitle": "內建 PDF 工具（合併、分割、轉換等）",
+  "settingsTitle": "設定"
 }

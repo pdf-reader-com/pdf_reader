@@ -158,6 +158,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get toolsReadingSettingsSubtitle => '字体大小、主题、翻页方式等';
 
   @override
+  String get toolsPdfCraft => 'PDFCraft';
+
+  @override
+  String get toolsPdfCraftSubtitle => '内置 PDF 工具（合并、拆分、转换等）';
+
+  @override
   String get settingsTitle => '设置';
 
   @override
@@ -352,4 +358,13 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get toolsReadingSettingsSubtitle => '字型大小、主題、翻頁方式等';
+
+  @override
+  String get toolsPdfCraft => 'PDFCraft';
+
+  @override
+  String get toolsPdfCraftSubtitle => '內建 PDF 工具（合併、分割、轉換等）';
+
+  @override
+  String get settingsTitle => '設定';
 }

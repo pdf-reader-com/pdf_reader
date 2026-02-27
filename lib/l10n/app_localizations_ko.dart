@@ -160,7 +160,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get toolsReadingSettingsSubtitle => '글꼴 크기, 테마, 페이지 넘김 방식 등';
 
   @override
-  String get settingsTitle => 'Settings';
+  String get toolsPdfCraft => 'PDFCraft';
+
+  @override
+  String get toolsPdfCraftSubtitle => '내장 PDF 도구 (병합, 분할, 변환 등)';
+
+  @override
+  String get settingsTitle => '설정';
 
   @override
   String get settingsLanguageTitle => 'Language';

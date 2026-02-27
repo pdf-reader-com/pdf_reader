@@ -55,5 +55,8 @@
   "toolsTranslateFile": "Перевести текущий файл",
   "toolsTranslateFileSubtitle": "Использовать внешние сервисы для перевода содержимого",
   "toolsReadingSettings": "Настройки чтения",
-  "toolsReadingSettingsSubtitle": "Размер шрифта, тема, способ перелистывания и другое"
+  "toolsReadingSettingsSubtitle": "Размер шрифта, тема, способ перелистывания и другое",
+  "toolsPdfCraft": "PDFCraft",
+  "toolsPdfCraftSubtitle": "Встроенные PDF-инструменты (объединение, разделение, конвертация и т.д.)",
+  "settingsTitle": "Настройки"
 }

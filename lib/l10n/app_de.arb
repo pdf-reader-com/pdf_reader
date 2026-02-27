@@ -55,5 +55,8 @@
   "toolsTranslateFile": "Aktuelle Datei übersetzen",
   "toolsTranslateFileSubtitle": "Externe Dienste zum Übersetzen des Inhalts verwenden",
   "toolsReadingSettings": "Leseeinstellungen",
-  "toolsReadingSettingsSubtitle": "Schriftgröße, Thema, Blättermodus usw."
+  "toolsReadingSettingsSubtitle": "Schriftgröße, Thema, Blättermodus usw.",
+  "toolsPdfCraft": "PDFCraft",
+  "toolsPdfCraftSubtitle": "Eingebaute PDF-Tools (zusammenführen, teilen, konvertieren usw.)",
+  "settingsTitle": "Einstellungen"
 }

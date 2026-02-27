@@ -169,7 +169,14 @@ class AppLocalizationsEs extends AppLocalizations {
       'Tamaño de fuente, tema, modo de paso de página, etc.';
 
   @override
-  String get settingsTitle => 'Settings';
+  String get toolsPdfCraft => 'PDFCraft';
+
+  @override
+  String get toolsPdfCraftSubtitle =>
+      'Herramientas PDF integradas (combinar, dividir, convertir, etc.)';
+
+  @override
+  String get settingsTitle => 'Ajustes';
 
   @override
   String get settingsLanguageTitle => 'Language';

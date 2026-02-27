@@ -55,5 +55,8 @@
   "toolsTranslateFile": "Traduire le fichier actuel",
   "toolsTranslateFileSubtitle": "Utiliser des services externes pour traduire le contenu",
   "toolsReadingSettings": "Paramètres de lecture",
-  "toolsReadingSettingsSubtitle": "Taille de police, thème, mode de défilement, etc."
+  "toolsReadingSettingsSubtitle": "Taille de police, thème, mode de défilement, etc.",
+  "toolsPdfCraft": "PDFCraft",
+  "toolsPdfCraftSubtitle": "Outils PDF intégrés (fusionner, diviser, convertir, etc.)",
+  "settingsTitle": "Paramètres"
 }

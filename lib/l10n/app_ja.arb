@@ -55,5 +55,8 @@
   "toolsTranslateFile": "現在のファイルを翻訳",
   "toolsTranslateFileSubtitle": "外部サービスを使って内容を翻訳します",
   "toolsReadingSettings": "閲覧設定",
-  "toolsReadingSettingsSubtitle": "フォントサイズ、テーマ、ページ送り方法など"
+  "toolsReadingSettingsSubtitle": "フォントサイズ、テーマ、ページ送り方法など",
+  "toolsPdfCraft": "PDFCraft",
+  "toolsPdfCraftSubtitle": "内蔵 PDF ツール（結合・分割・変換など）",
+  "settingsTitle": "設定"
 }

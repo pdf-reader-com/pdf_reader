@@ -55,5 +55,8 @@
   "toolsTranslateFile": "Traduci file corrente",
   "toolsTranslateFileSubtitle": "Usa servizi esterni per tradurre il contenuto",
   "toolsReadingSettings": "Impostazioni di lettura",
-  "toolsReadingSettingsSubtitle": "Dimensione del carattere, tema, modalità di scorrimento, ecc."
+  "toolsReadingSettingsSubtitle": "Dimensione del carattere, tema, modalità di scorrimento, ecc.",
+  "toolsPdfCraft": "PDFCraft",
+  "toolsPdfCraftSubtitle": "Strumenti PDF integrati (unisci, dividi, converti, ecc.)",
+  "settingsTitle": "Impostazioni"
 }

@@ -409,6 +409,18 @@ abstract class AppLocalizations {
   /// **'Font size, theme, page turning mode, etc.'**
   String get toolsReadingSettingsSubtitle;
 
+  /// No description provided for @toolsPdfCraft.
+  ///
+  /// In en, this message translates to:
+  /// **'PDFCraft'**
+  String get toolsPdfCraft;
+
+  /// No description provided for @toolsPdfCraftSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Built-in PDF tools (merge, split, convert, etc.)'**
+  String get toolsPdfCraftSubtitle;
+
   /// No description provided for @settingsTitle.
   ///
   /// In en, this message translates to:

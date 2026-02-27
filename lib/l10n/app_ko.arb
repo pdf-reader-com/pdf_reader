@@ -55,5 +55,8 @@
   "toolsTranslateFile": "현재 파일 번역",
   "toolsTranslateFileSubtitle": "외부 서비스를 사용해 내용을 번역합니다",
   "toolsReadingSettings": "읽기 설정",
-  "toolsReadingSettingsSubtitle": "글꼴 크기, 테마, 페이지 넘김 방식 등"
+  "toolsReadingSettingsSubtitle": "글꼴 크기, 테마, 페이지 넘김 방식 등",
+  "toolsPdfCraft": "PDFCraft",
+  "toolsPdfCraftSubtitle": "내장 PDF 도구 (병합, 분할, 변환 등)",
+  "settingsTitle": "설정"
 }

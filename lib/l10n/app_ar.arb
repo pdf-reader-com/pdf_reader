@@ -55,5 +55,8 @@
   "toolsTranslateFile": "ترجمة الملف الحالي",
   "toolsTranslateFileSubtitle": "استخدام خدمات خارجية لترجمة المحتوى",
   "toolsReadingSettings": "إعدادات القراءة",
-  "toolsReadingSettingsSubtitle": "حجم الخط، النمط، طريقة التقليب، وغير ذلك"
+  "toolsReadingSettingsSubtitle": "حجم الخط، النمط، طريقة التقليب، وغير ذلك",
+  "toolsPdfCraft": "PDFCraft",
+  "toolsPdfCraftSubtitle": "أدوات PDF مدمجة (دمج، تقسيم، تحويل، إلخ)",
+  "settingsTitle": "الإعدادات"
 }

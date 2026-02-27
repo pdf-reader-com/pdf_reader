@@ -163,7 +163,14 @@ class AppLocalizationsAr extends AppLocalizations {
       'حجم الخط، النمط، طريقة التقليب، وغير ذلك';
 
   @override
-  String get settingsTitle => 'Settings';
+  String get toolsPdfCraft => 'PDFCraft';
+
+  @override
+  String get toolsPdfCraftSubtitle =>
+      'أدوات PDF مدمجة (دمج، تقسيم، تحويل، إلخ)';
+
+  @override
+  String get settingsTitle => 'الإعدادات';
 
   @override
   String get settingsLanguageTitle => 'Language';
