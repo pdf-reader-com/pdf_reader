@@ -1,5 +1,6 @@
 name: pdf_reader
 description: "A new PDF reader project."
+license: AGPL-3.0
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -48,12 +49,14 @@ dependencies:
   path_provider: ^2.1.5
   package_info_plus: ^9.0.0
   shared_preferences: ^2.5.3
+  url_launcher: ^6.3.0
   # docx viewer
   docx_file_viewer: ^1.0.1
   flutter_inappwebview: ^6.1.5
   shelf: ^1.4.0
   flutter_svg: ^2.2.3
   shelf_static: ^1.1.3
+  flutter_epub_viewer: ^1.2.8
 
 dev_dependencies:
   flutter_test:

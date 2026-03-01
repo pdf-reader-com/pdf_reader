@@ -30,6 +30,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get filterPdf => 'PDF';
 
   @override
+  String get filterEpub => 'EPUB';
+
+  @override
   String get filterDoc => '文档';
 
   @override
@@ -66,6 +69,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get fileTypePdf => 'PDF';
+
+  @override
+  String get fileTypeEpub => 'EPUB';
 
   @override
   String get fileTypeDoc => '文档';
@@ -204,6 +210,44 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get themeColorSubtitle => '界面主色和强调色';
+
+  @override
+  String get settingsAboutTitle => '关于';
+
+  @override
+  String get settingsAboutSubtitle => '版本与开源地址';
+
+  @override
+  String get aboutTitle => '关于';
+
+  @override
+  String get aboutAppName => '应用名称';
+
+  @override
+  String get aboutVersion => '版本';
+
+  @override
+  String get aboutBuildNumber => '构建号';
+
+  @override
+  String get aboutPackageName => '包名';
+
+  @override
+  String aboutLoadError(String error) {
+    return '获取应用信息失败：$error';
+  }
+
+  @override
+  String get aboutOpenSourceLabel => '开源地址';
+
+  @override
+  String get aboutOpenSourceHint => '本项目开源在';
+
+  @override
+  String get aboutSourceLinkLabel => 'GitHub';
+
+  @override
+  String get openInSystemBrowser => '用系统浏览器打开';
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).
@@ -230,6 +274,9 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get filterPdf => 'PDF';
+
+  @override
+  String get filterEpub => 'EPUB';
 
   @override
   String get filterDoc => '文件';
@@ -268,6 +315,9 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get fileTypePdf => 'PDF';
+
+  @override
+  String get fileTypeEpub => 'EPUB';
 
   @override
   String get fileTypeDoc => '文件';

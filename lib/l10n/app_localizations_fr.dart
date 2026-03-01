@@ -30,6 +30,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get filterPdf => 'PDF';
 
   @override
+  String get filterEpub => 'EPUB';
+
+  @override
   String get filterDoc => 'Documents';
 
   @override
@@ -67,6 +70,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get fileTypePdf => 'PDF';
+
+  @override
+  String get fileTypeEpub => 'EPUB';
 
   @override
   String get fileTypeDoc => 'Document';
@@ -215,4 +221,42 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get themeColorSubtitle => 'Accent color for interface';
+
+  @override
+  String get settingsAboutTitle => 'About';
+
+  @override
+  String get settingsAboutSubtitle => 'Version and source code';
+
+  @override
+  String get aboutTitle => 'About';
+
+  @override
+  String get aboutAppName => 'App name';
+
+  @override
+  String get aboutVersion => 'Version';
+
+  @override
+  String get aboutBuildNumber => 'Build';
+
+  @override
+  String get aboutPackageName => 'Package';
+
+  @override
+  String aboutLoadError(String error) {
+    return 'Failed to load app info: $error';
+  }
+
+  @override
+  String get aboutOpenSourceLabel => 'Source code';
+
+  @override
+  String get aboutOpenSourceHint => 'This project is open source at';
+
+  @override
+  String get aboutSourceLinkLabel => 'GitHub';
+
+  @override
+  String get openInSystemBrowser => 'Open in system browser';
 }

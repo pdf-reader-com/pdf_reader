@@ -157,6 +157,12 @@ abstract class AppLocalizations {
   /// **'PDF'**
   String get filterPdf;
 
+  /// No description provided for @filterEpub.
+  ///
+  /// In en, this message translates to:
+  /// **'EPUB'**
+  String get filterEpub;
+
   /// No description provided for @filterDoc.
   ///
   /// In en, this message translates to:
@@ -228,6 +234,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'PDF'**
   String get fileTypePdf;
+
+  /// No description provided for @fileTypeEpub.
+  ///
+  /// In en, this message translates to:
+  /// **'EPUB'**
+  String get fileTypeEpub;
 
   /// No description provided for @fileTypeDoc.
   ///
@@ -504,6 +516,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Accent color for interface'**
   String get themeColorSubtitle;
+
+  /// No description provided for @settingsAboutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get settingsAboutTitle;
+
+  /// No description provided for @settingsAboutSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Version and source code'**
+  String get settingsAboutSubtitle;
+
+  /// No description provided for @aboutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get aboutTitle;
+
+  /// No description provided for @aboutAppName.
+  ///
+  /// In en, this message translates to:
+  /// **'App name'**
+  String get aboutAppName;
+
+  /// No description provided for @aboutVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get aboutVersion;
+
+  /// No description provided for @aboutBuildNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Build'**
+  String get aboutBuildNumber;
+
+  /// No description provided for @aboutPackageName.
+  ///
+  /// In en, this message translates to:
+  /// **'Package'**
+  String get aboutPackageName;
+
+  /// No description provided for @aboutLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load app info: {error}'**
+  String aboutLoadError(String error);
+
+  /// No description provided for @aboutOpenSourceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Source code'**
+  String get aboutOpenSourceLabel;
+
+  /// No description provided for @aboutOpenSourceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This project is open source at'**
+  String get aboutOpenSourceHint;
+
+  /// No description provided for @aboutSourceLinkLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'GitHub'**
+  String get aboutSourceLinkLabel;
+
+  /// No description provided for @openInSystemBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in system browser'**
+  String get openInSystemBrowser;
 }
 
 class _AppLocalizationsDelegate

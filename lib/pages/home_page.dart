@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart' hide FileType;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:pdf_reader/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -38,6 +40,12 @@ class _ReaderHomePageState extends State<ReaderHomePage> {
 
   static const _prefsKeyRecent = 'reader_recent';
   static const _prefsKeyBookmarks = 'reader_bookmarks';
+  static const _fileListFileName = 'reader_file_list.json';
+
+  Future<String> _fileListStoragePath() async {
+    final dir = await getApplicationDocumentsDirectory();
+    return p.join(dir.path, _fileListFileName);
+  }
 
   @override
   void initState() {
@@ -46,43 +54,106 @@ class _ReaderHomePageState extends State<ReaderHomePage> {
   }
 
   Future<void> _loadPersistentState() async {
-    final prefs = await SharedPreferences.getInstance();
-    final recentRaw = prefs.getStringList(_prefsKeyRecent) ?? [];
-    final bookmarkRaw = prefs.getStringList(_prefsKeyBookmarks) ?? [];
+    final skipMemory = Platform.isMacOS || Platform.isIOS;
 
-    // recent 采用 "path|timestamp" 的格式
-    for (final entry in recentRaw) {
-      final parts = entry.split('|');
-      if (parts.length != 2) continue;
-      final path = parts[0];
-      final millis = int.tryParse(parts[1]);
-      if (millis == null) continue;
-      _recentMap[path] = DateTime.fromMillisecondsSinceEpoch(millis);
+    if (!skipMemory) {
+      final prefs = await SharedPreferences.getInstance();
+      final recentRaw = prefs.getStringList(_prefsKeyRecent) ?? [];
+      final bookmarkRaw = prefs.getStringList(_prefsKeyBookmarks) ?? [];
+
+      // recent 采用 "path|timestamp" 的格式
+      for (final entry in recentRaw) {
+        final parts = entry.split('|');
+        if (parts.length != 2) continue;
+        final path = parts[0];
+        final millis = int.tryParse(parts[1]);
+        if (millis == null) continue;
+        _recentMap[path] = DateTime.fromMillisecondsSinceEpoch(millis);
+      }
+
+      _bookmarkPaths
+        ..clear()
+        ..addAll(bookmarkRaw);
     }
 
-    _bookmarkPaths
-      ..clear()
-      ..addAll(bookmarkRaw);
+    // 恢复上次扫描的文件列表（仅 Android/Windows 等；macOS/iOS 不记忆）
+    if (!skipMemory) {
+      try {
+        final path = await _fileListStoragePath();
+        final file = File(path);
+        if (await file.exists()) {
+          final jsonStr = await file.readAsString();
+          final list = jsonDecode(jsonStr) as List<dynamic>?;
+          if (list != null) {
+            final restored = <ReaderFile>[];
+            for (final e in list) {
+              final map = e is Map<String, dynamic> ? e : Map<String, dynamic>.from(e as Map);
+              final rf = ReaderFile.fromJson(map);
+              if (rf == null) continue;
+              if (!Platform.isAndroid) {
+                if (!File(rf.path).existsSync()) continue;
+              }
+              rf.lastOpenedAt = _recentMap[rf.path];
+              rf.isBookmarked = _bookmarkPaths.contains(rf.path);
+              restored.add(rf);
+            }
+            if (mounted) {
+              setState(() {
+                _allFiles
+                  ..clear()
+                  ..addAll(restored);
+              });
+            }
+          }
+        }
+      } catch (_) {
+        // 首次启动或文件损坏时忽略
+      }
+    }
   }
 
   Future<void> _savePersistentState() async {
-    final prefs = await SharedPreferences.getInstance();
-    final recentRaw = _recentMap.entries
-        .map((e) => '${e.key}|${e.value.millisecondsSinceEpoch}')
-        .toList();
-    await prefs.setStringList(_prefsKeyRecent, recentRaw);
-    await prefs.setStringList(_prefsKeyBookmarks, _bookmarkPaths.toList());
+    final skipMemory = Platform.isMacOS || Platform.isIOS;
+    if (!skipMemory) {
+      final prefs = await SharedPreferences.getInstance();
+      final recentRaw = _recentMap.entries
+          .map((e) => '${e.key}|${e.value.millisecondsSinceEpoch}')
+          .toList();
+      await prefs.setStringList(_prefsKeyRecent, recentRaw);
+      await prefs.setStringList(_prefsKeyBookmarks, _bookmarkPaths.toList());
+    }
+
+    // macOS/iOS 不持久化文件列表
+    if (skipMemory) return;
+    try {
+      final path = await _fileListStoragePath();
+      final list = _allFiles.map((f) => f.toJson()).toList();
+      await File(path).writeAsString(jsonEncode(list));
+    } catch (_) {}
   }
 
   List<ReaderFile> get _recentFiles {
-    final files =
+    final fromAll =
         _allFiles.where((f) => f.lastOpenedAt != null).toList(growable: false);
-    files.sort((a, b) => b.lastOpenedAt!.compareTo(a.lastOpenedAt!));
-    return files.take(50).toList();
+    final pathSet = fromAll.map((e) => e.path).toSet();
+    final synthetic = _recentMap.entries
+        .where((e) => !pathSet.contains(e.key))
+        .map((e) => ReaderFile.fromPath(e.key, lastOpenedAt: e.value))
+        .toList();
+    final combined = [...fromAll, ...synthetic];
+    combined.sort((a, b) => (b.lastOpenedAt ?? DateTime(0)).compareTo(a.lastOpenedAt ?? DateTime(0)));
+    return combined.take(50).toList();
   }
 
-  List<ReaderFile> get _bookmarkedFiles =>
-      _allFiles.where((f) => f.isBookmarked).toList();
+  List<ReaderFile> get _bookmarkedFiles {
+    final fromAll = _allFiles.where((f) => f.isBookmarked).toList();
+    final pathSet = fromAll.map((e) => e.path).toSet();
+    final synthetic = _bookmarkPaths
+        .where((p) => !pathSet.contains(p))
+        .map((p) => ReaderFile.fromPath(p, isBookmarked: true))
+        .toList();
+    return [...fromAll, ...synthetic];
+  }
 
   List<ReaderFile> _applyFilter(List<ReaderFile> files) {
     if (_filterType == null) return files;
@@ -94,6 +165,7 @@ class _ReaderHomePageState extends State<ReaderHomePage> {
       file.lastOpenedAt = DateTime.now();
       _recentMap[file.path] = file.lastOpenedAt!;
     });
+    _savePersistentState(); // 打开即保存最近记录
 
     final updatedBookmark = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
@@ -239,6 +311,8 @@ class _ReaderHomePageState extends State<ReaderHomePage> {
     switch (ext) {
       case '.pdf':
         return FileType.pdf;
+      case '.epub':
+        return FileType.epub;
       case '.doc':
       case '.docx':
       case '.xls':
@@ -431,6 +505,12 @@ class FileListView extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               FilterChip(
+                label: Text(l.filterEpub),
+                selected: currentFilter == FileType.epub,
+                onSelected: (_) => onChangeFilter(FileType.epub),
+              ),
+              const SizedBox(width: 8),
+              FilterChip(
                 label: Text(l.filterDoc),
                 selected: currentFilter == FileType.doc,
                 onSelected: (_) => onChangeFilter(FileType.doc),
@@ -493,6 +573,8 @@ class FileListView extends StatelessWidget {
     switch (type) {
       case FileType.pdf:
         return Icons.picture_as_pdf;
+      case FileType.epub:
+        return Icons.menu_book;
       case FileType.doc:
         return Icons.description;
       case FileType.txt:
@@ -508,6 +590,7 @@ class FileListView extends StatelessWidget {
     final l = AppLocalizations.of(context)!;
     final typeLabel = switch (file.type) {
       FileType.pdf => l.fileTypePdf,
+      FileType.epub => l.fileTypeEpub,
       FileType.doc => l.fileTypeDoc,
       FileType.txt => l.fileTypeTxt,
       FileType.markdown => l.fileTypeMarkdown,

@@ -27,6 +27,12 @@ class PdfCraftServer {
   /// 本地访问根地址，用于 InAppWebView 加载
   static String get baseUrl => 'http://127.0.0.1:$port/';
 
+  /// 远程 PDFCraft 页面，在本地未解压/未就绪时使用
+  static const String remoteUrl = 'https://pdfcraft.devtoolcafe.com/';
+
+  /// 本地服务是否已启动（解压完成且 shelf 已监听）
+  static bool get isReady => _started;
+
   /// 确保服务已启动。首次调用会启动 shelf 并托管 pdfcraft 资源。
   ///
   /// 由于 Flutter 资源打包在 APK/APP 内部，不能直接作为文件系统目录访问，

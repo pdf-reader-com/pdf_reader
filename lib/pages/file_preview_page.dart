@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:docx_file_viewer/docx_file_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_epub_viewer/flutter_epub_viewer.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:path/path.dart' as p;
 import 'package:pdfrx/pdfrx.dart';
@@ -48,21 +49,28 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
     final l = AppLocalizations.of(context)!;
     final file = widget.file;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(file.name),
-        actions: [
-          IconButton(
-            tooltip: l.bookmark,
-            icon: Icon(
-              file.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          Navigator.of(context).pop(file.isBookmarked);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(file.name),
+          actions: [
+            IconButton(
+              tooltip: l.bookmark,
+              icon: Icon(
+                file.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+              ),
+              onPressed: () {
+                setState(() {
+                  file.isBookmarked = !file.isBookmarked;
+                });
+              },
             ),
-            onPressed: () {
-              setState(() {
-                file.isBookmarked = !file.isBookmarked;
-              });
-            },
-          ),
           IconButton(
             tooltip: l.share,
             icon: const Icon(Icons.share),
@@ -81,7 +89,8 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
           ),
         ],
       ),
-      body: _buildPreviewBody(file),
+        body: _buildPreviewBody(file),
+      ),
     );
   }
 
@@ -113,6 +122,8 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
     switch (file.type) {
       case FileType.pdf:
         return PdfViewer.file(path);
+      case FileType.epub:
+        return _EpubPreviewWidget(path: path);
       case FileType.markdown:
         return FutureBuilder<String>(
           future: File(path).readAsString(),
@@ -227,6 +238,65 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
           ),
         );
       },
+    );
+  }
+}
+
+/// 内嵌 EPUB 阅读器，使用 [flutter_epub_viewer]
+class _EpubPreviewWidget extends StatefulWidget {
+  const _EpubPreviewWidget({required this.path});
+
+  final String path;
+
+  @override
+  State<_EpubPreviewWidget> createState() => _EpubPreviewWidgetState();
+}
+
+class _EpubPreviewWidgetState extends State<_EpubPreviewWidget> {
+  final EpubController _epubController = EpubController();
+  bool _isLoading = true;
+  double _progress = 0.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final epubTheme = isDark ? EpubTheme.dark() : EpubTheme.light();
+
+    return SafeArea(
+      child: Column(
+        children: [
+          LinearProgressIndicator(
+            value: _progress,
+            backgroundColor: Colors.transparent,
+          ),
+          Expanded(
+            child: Stack(
+              children: [
+                EpubViewer(
+                  epubSource: EpubSource.fromFile(File(widget.path)),
+                  epubController: _epubController,
+                  displaySettings: EpubDisplaySettings(
+                    flow: EpubFlow.paginated,
+                    useSnapAnimationAndroid: false,
+                    snap: true,
+                    theme: epubTheme,
+                    allowScriptedContent: true,
+                  ),
+                  onChaptersLoaded: (_) {
+                    if (mounted) setState(() => _isLoading = false);
+                  },
+                  onEpubLoaded: () {},
+                  onRelocated: (value) {
+                    if (mounted) setState(() => _progress = value.progress);
+                  },
+                ),
+                if (_isLoading)
+                  const Center(child: CircularProgressIndicator()),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

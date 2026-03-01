@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pdf_reader/l10n/app_localizations.dart';
 
-import '../main.dart';
+import 'about_page.dart';
 import 'language_settings_page.dart';
 import 'theme_settings_page.dart';
 
@@ -42,6 +42,18 @@ class SettingsPage extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (_) => const ThemeSettingsPage(),
+              ),
+            );
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.info_outline),
+          title: Text(l.settingsAboutTitle),
+          subtitle: Text(l.settingsAboutSubtitle),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const AboutPage(),
               ),
             );
           },
