@@ -53,7 +53,13 @@ class ReaderFile {
     final uri = path;
     final lastSlash = uri.lastIndexOf('/');
     if (lastSlash >= 0 && lastSlash < uri.length - 1) {
-      return Uri.decodeComponent(uri.substring(lastSlash + 1));
+      final raw = uri.substring(lastSlash + 1);
+      try {
+        return Uri.decodeComponent(raw);
+      } catch (_) {
+        // 已删除或损坏的路径可能含非法 percent 编码，直接返回未解码片段
+        return raw;
+      }
     }
     return p.basename(path);
   }
