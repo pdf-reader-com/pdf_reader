@@ -22,7 +22,8 @@ class _PdfCraftPageState extends State<PdfCraftPage> {
     super.initState();
     if (!PdfCraftServer.isReady) {
       PdfCraftServer.ensureStarted().then((_) {
-        if (mounted && !_useLocalServer) {
+        // 仅当本地服务真正启动成功时再切换到本地（Android Release 可能无法绑定端口）
+        if (mounted && !_useLocalServer && PdfCraftServer.isReady) {
           setState(() => _useLocalServer = true);
           _webViewController?.loadUrl(
             urlRequest: URLRequest(url: WebUri(PdfCraftServer.baseUrl)),

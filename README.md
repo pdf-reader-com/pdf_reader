@@ -1,6 +1,6 @@
 # pdf_reader
 
-A new PDF reader project.支持PDF、Markdown、docx、ppt、xlsx等文档的预览
+A new PDF reader project. Supports preview of PDF, Markdown, docx, ppt, xlsx and other document formats.
 
 ## PDF editor
 

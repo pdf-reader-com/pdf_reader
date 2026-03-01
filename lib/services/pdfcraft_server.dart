@@ -61,6 +61,11 @@ class PdfCraftServer {
         port,
       );
       debugPrint('PdfCraftServer listening on $baseUrl (assets from $assetsDir)');
+    } on SocketException catch (e, st) {
+      // Android Release 等环境可能禁止应用绑定 127.0.0.1，导致 Operation not permitted。
+      // 不抛出，保持 _started = false，页面将使用 remoteUrl 作为回退。
+      _started = false;
+      debugPrint('PdfCraftServer: cannot bind (e.g. Android Release), using remote fallback. $e\n$st');
     } catch (e, st) {
       _started = false;
       debugPrint('PdfCraftServer start error: $e\n$st');

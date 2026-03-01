@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 访问网络：PDFCraft 远程回退页、InAppWebView 加载远程内容等 -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- 访问外部存储用于扫描用户选择的目录中的文档。
          对于 Android 13+ 建议改为基于 SAF/系统选择器的访问，
          这里仍声明 READ/WRITE_EXTERNAL_STORAGE 以兼容旧版本。 -->
