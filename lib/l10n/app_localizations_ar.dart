@@ -137,6 +137,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get moreDeleteTodo => 'ميزة الحذف قيد التنفيذ';
 
   @override
+  String get deleteConfirmTitle => 'حذف الملف؟';
+
+  @override
+  String get deleteConfirmMessage =>
+      'سيتم حذف هذا الملف نهائياً ولا يمكن التراجع عن ذلك.';
+
+  @override
+  String get shareFailed => 'فشل المشاركة';
+
+  @override
+  String get openWithOtherFailed => 'فشل فتح التطبيق الآخر';
+
+  @override
+  String get deleteFailed => 'فشل حذف الملف';
+
+  @override
+  String get cannotDeleteFile => 'لا يمكن حذف هذا الملف من هنا.';
+
+  @override
   String get toolsTitle => 'الأدوات';
 
   @override

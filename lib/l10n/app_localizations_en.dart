@@ -138,6 +138,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moreDeleteTodo => 'Delete feature to be implemented';
 
   @override
+  String get deleteConfirmTitle => 'Delete file?';
+
+  @override
+  String get deleteConfirmMessage =>
+      'This file will be permanently deleted. This cannot be undone.';
+
+  @override
+  String get shareFailed => 'Share failed';
+
+  @override
+  String get openWithOtherFailed => 'Failed to open with other app';
+
+  @override
+  String get deleteFailed => 'Failed to delete file';
+
+  @override
+  String get cannotDeleteFile => 'This file cannot be deleted from here.';
+
+  @override
   String get toolsTitle => 'Tools';
 
   @override

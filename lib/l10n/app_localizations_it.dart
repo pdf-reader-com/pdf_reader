@@ -141,6 +141,25 @@ class AppLocalizationsIt extends AppLocalizations {
       'La funzione di eliminazione deve ancora essere implementata';
 
   @override
+  String get deleteConfirmTitle => 'Eliminare il file?';
+
+  @override
+  String get deleteConfirmMessage =>
+      'Questo file verrà eliminato definitivamente. L\'azione non può essere annullata.';
+
+  @override
+  String get shareFailed => 'Condivisione non riuscita';
+
+  @override
+  String get openWithOtherFailed => 'Impossibile aprire con un\'altra app';
+
+  @override
+  String get deleteFailed => 'Eliminazione del file non riuscita';
+
+  @override
+  String get cannotDeleteFile => 'Questo file non può essere eliminato da qui.';
+
+  @override
   String get toolsTitle => 'Strumenti';
 
   @override

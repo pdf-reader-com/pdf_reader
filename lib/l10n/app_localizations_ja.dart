@@ -135,6 +135,24 @@ class AppLocalizationsJa extends AppLocalizations {
   String get moreDeleteTodo => '削除機能は実装予定です';
 
   @override
+  String get deleteConfirmTitle => 'ファイルを削除しますか？';
+
+  @override
+  String get deleteConfirmMessage => 'このファイルは完全に削除され、元に戻せません。';
+
+  @override
+  String get shareFailed => '共有に失敗しました';
+
+  @override
+  String get openWithOtherFailed => '他のアプリで開けませんでした';
+
+  @override
+  String get deleteFailed => 'ファイルの削除に失敗しました';
+
+  @override
+  String get cannotDeleteFile => 'このファイルはここから削除できません。';
+
+  @override
   String get toolsTitle => 'ツール';
 
   @override

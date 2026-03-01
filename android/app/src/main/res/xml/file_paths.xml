@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- 用于分享/用其他应用打开时，从应用缓存或外部存储提供文件 URI -->
+    <cache-path name="cache" path="." />
+    <external-path name="external" path="." />
+    <files-path name="files" path="." />
+</paths>

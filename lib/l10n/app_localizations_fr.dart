@@ -138,6 +138,26 @@ class AppLocalizationsFr extends AppLocalizations {
   String get moreDeleteTodo => 'La fonction de suppression reste à implémenter';
 
   @override
+  String get deleteConfirmTitle => 'Supprimer le fichier ?';
+
+  @override
+  String get deleteConfirmMessage =>
+      'Ce fichier sera définitivement supprimé. Cette action est irréversible.';
+
+  @override
+  String get shareFailed => 'Échec du partage';
+
+  @override
+  String get openWithOtherFailed =>
+      'Impossible d\'ouvrir avec une autre application';
+
+  @override
+  String get deleteFailed => 'Échec de la suppression du fichier';
+
+  @override
+  String get cannotDeleteFile => 'Ce fichier ne peut pas être supprimé ici.';
+
+  @override
   String get toolsTitle => 'Outils';
 
   @override

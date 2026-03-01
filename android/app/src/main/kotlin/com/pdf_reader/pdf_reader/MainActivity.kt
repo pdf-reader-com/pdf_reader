@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.OpenableColumns
 import android.provider.Settings
+import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -129,6 +130,30 @@ class MainActivity : FlutterActivity() {
                         }
                     }
                 }
+                "openWithOtherApp" -> {
+                    val pathOrUri = call.argument<String>("pathOrUri") ?: run {
+                        result.error("INVALID", "pathOrUri is required", null)
+                        return@setMethodCallHandler
+                    }
+                    try {
+                        openWithOtherApp(pathOrUri)
+                        result.success(null)
+                    } catch (e: Exception) {
+                        result.error("OPEN_FAILED", e.message, null)
+                    }
+                }
+                "deleteContentUri" -> {
+                    val uriStr = call.argument<String>("uri") ?: run {
+                        result.error("INVALID", "uri is required", null)
+                        return@setMethodCallHandler
+                    }
+                    try {
+                        val deleted = deleteContentUri(uriStr)
+                        result.success(deleted)
+                    } catch (e: Exception) {
+                        result.error("DELETE_FAILED", e.message, null)
+                    }
+                }
                 else -> result.notImplemented()
             }
         }
@@ -247,5 +272,55 @@ class MainActivity : FlutterActivity() {
                 )
             }
         }
+    }
+
+    /** 用其他应用打开：pathOrUri 为 content:// 或文件绝对路径 */
+    private fun openWithOtherApp(pathOrUri: String) {
+        val (uri, mimeType) = if (pathOrUri.startsWith("content://")) {
+            Pair(Uri.parse(pathOrUri), getMimeTypeFromUri(pathOrUri))
+        } else {
+            val file = File(pathOrUri)
+            if (!file.exists()) throw IllegalStateException("File not found: $pathOrUri")
+            val contentUri = FileProvider.getUriForFile(
+                this,
+                "${packageName}.fileprovider",
+                file
+            )
+            Pair(contentUri, getMimeTypeFromPath(file.name))
+        }
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, mimeType)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        startActivity(Intent.createChooser(intent, null))
+    }
+
+    private fun getMimeTypeFromUri(uriStr: String): String {
+        val name = Uri.parse(uriStr).lastPathSegment ?: ""
+        return getMimeTypeFromPath(name)
+    }
+
+    private fun getMimeTypeFromPath(fileName: String): String {
+        val ext = fileName.substringAfterLast('.', "").lowercase(Locale.ROOT)
+        return when (ext) {
+            "pdf" -> "application/pdf"
+            "epub" -> "application/epub+zip"
+            "docx" -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            "doc" -> "application/msword"
+            "xlsx" -> "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            "xls" -> "application/vnd.ms-excel"
+            "pptx" -> "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+            "ppt" -> "application/vnd.ms-powerpoint"
+            "txt" -> "text/plain"
+            "md", "markdown" -> "text/markdown"
+            else -> "*/*"
+        }
+    }
+
+    /** 通过 DocumentFile 删除 content URI 对应文件（需有写权限，如来自 SAF 目录选择） */
+    private fun deleteContentUri(uriStr: String): Boolean {
+        val uri = Uri.parse(uriStr)
+        val doc = DocumentFile.fromSingleUri(this, uri) ?: return false
+        return doc.delete()
     }
 }

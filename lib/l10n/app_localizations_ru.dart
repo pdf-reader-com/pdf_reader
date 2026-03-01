@@ -139,6 +139,25 @@ class AppLocalizationsRu extends AppLocalizations {
   String get moreDeleteTodo => 'Функция удаления будет реализована позже';
 
   @override
+  String get deleteConfirmTitle => 'Удалить файл?';
+
+  @override
+  String get deleteConfirmMessage =>
+      'Файл будет удалён безвозвратно. Это действие нельзя отменить.';
+
+  @override
+  String get shareFailed => 'Ошибка отправки';
+
+  @override
+  String get openWithOtherFailed => 'Не удалось открыть в другом приложении';
+
+  @override
+  String get deleteFailed => 'Не удалось удалить файл';
+
+  @override
+  String get cannotDeleteFile => 'Этот файл нельзя удалить отсюда.';
+
+  @override
   String get toolsTitle => 'Инструменты';
 
   @override

@@ -361,6 +361,42 @@ abstract class AppLocalizations {
   /// **'Delete feature to be implemented'**
   String get moreDeleteTodo;
 
+  /// No description provided for @deleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete file?'**
+  String get deleteConfirmTitle;
+
+  /// No description provided for @deleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This file will be permanently deleted. This cannot be undone.'**
+  String get deleteConfirmMessage;
+
+  /// No description provided for @shareFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Share failed'**
+  String get shareFailed;
+
+  /// No description provided for @openWithOtherFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to open with other app'**
+  String get openWithOtherFailed;
+
+  /// No description provided for @deleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete file'**
+  String get deleteFailed;
+
+  /// No description provided for @cannotDeleteFile.
+  ///
+  /// In en, this message translates to:
+  /// **'This file cannot be deleted from here.'**
+  String get cannotDeleteFile;
+
   /// No description provided for @toolsTitle.
   ///
   /// In en, this message translates to:

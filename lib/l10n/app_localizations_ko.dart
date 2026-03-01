@@ -136,6 +136,24 @@ class AppLocalizationsKo extends AppLocalizations {
   String get moreDeleteTodo => '삭제 기능은 추후 구현 예정입니다';
 
   @override
+  String get deleteConfirmTitle => '파일을 삭제하시겠습니까?';
+
+  @override
+  String get deleteConfirmMessage => '이 파일은 영구적으로 삭제되며 복구할 수 없습니다.';
+
+  @override
+  String get shareFailed => '공유 실패';
+
+  @override
+  String get openWithOtherFailed => '다른 앱으로 열기 실패';
+
+  @override
+  String get deleteFailed => '파일 삭제 실패';
+
+  @override
+  String get cannotDeleteFile => '여기서는 이 파일을 삭제할 수 없습니다.';
+
+  @override
   String get toolsTitle => '도구';
 
   @override

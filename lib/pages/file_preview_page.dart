@@ -8,6 +8,8 @@ import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:path/path.dart' as p;
 import 'package:pdfrx/pdfrx.dart';
 import 'package:pdf_reader/l10n/app_localizations.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/reader_file.dart';
 
@@ -27,9 +29,15 @@ Future<String> _resolvePreviewPath(ReaderFile file) async {
 }
 
 class FilePreviewPage extends StatefulWidget {
-  const FilePreviewPage({super.key, required this.file});
+  const FilePreviewPage({
+    super.key,
+    required this.file,
+    this.onFileDeleted,
+  });
 
   final ReaderFile file;
+  /// 当用户在预览页删除文件并成功后回调，调用后列表会从当前页返回并刷新
+  final VoidCallback? onFileDeleted;
 
   @override
   State<FilePreviewPage> createState() => _FilePreviewPageState();
@@ -74,11 +82,7 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
           IconButton(
             tooltip: l.share,
             icon: const Icon(Icons.share),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l.shareTodo)),
-              );
-            },
+            onPressed: () => _shareFile(context, file),
           ),
           IconButton(
             tooltip: l.more,
@@ -208,9 +212,7 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
                 title: Text(l.moreOpenWithOther),
                 onTap: () {
                   Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l.moreOpenWithOtherTodo)),
-                  );
+                  _openWithOtherApp(context, file);
                 },
               ),
               ListTile(
@@ -228,9 +230,7 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
                 title: Text(l.moreDelete),
                 onTap: () {
                   Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l.moreDeleteTodo)),
-                  );
+                  _confirmDeleteFile(context, file);
                 },
               ),
               const SizedBox(height: 8),
@@ -239,6 +239,137 @@ class _FilePreviewPageState extends State<FilePreviewPage> {
         );
       },
     );
+  }
+
+  Future<void> _shareFile(BuildContext context, ReaderFile file) async {
+    final l = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final path = await _resolvedPathFuture;
+      if (!mounted) return;
+      if (path.isEmpty) {
+        messenger.showSnackBar(SnackBar(content: Text(l.cannotResolvePath)));
+        return;
+      }
+      await Share.shareXFiles(
+        [XFile(path)],
+        text: file.name,
+      );
+    } catch (e) {
+      if (mounted) {
+        messenger.showSnackBar(
+          SnackBar(content: Text('${l.shareFailed}: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _openWithOtherApp(BuildContext context, ReaderFile file) async {
+    final l = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      if (Platform.isAndroid) {
+        await _androidChannel.invokeMethod<void>(
+          'openWithOtherApp',
+          <String, dynamic>{'pathOrUri': file.path},
+        );
+      } else {
+        final path = await _resolvedPathFuture;
+        if (!mounted) return;
+        if (path.isEmpty) {
+          messenger.showSnackBar(SnackBar(content: Text(l.cannotResolvePath)));
+          return;
+        }
+        final uri = Uri.file(path);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        } else {
+          if (mounted) messenger.showSnackBar(SnackBar(content: Text(l.openWithOtherFailed)));
+        }
+      }
+    } on PlatformException catch (e) {
+      if (mounted) {
+        messenger.showSnackBar(
+          SnackBar(content: Text('${l.openWithOtherFailed}: ${e.message ?? e.code}')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        messenger.showSnackBar(
+          SnackBar(content: Text('${l.openWithOtherFailed}: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _confirmDeleteFile(BuildContext context, ReaderFile file) async {
+    final l = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l.deleteConfirmTitle),
+        content: Text(l.deleteConfirmMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(MaterialLocalizations.of(ctx).cancelButtonLabel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l.moreDelete),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    try {
+      bool deleted = false;
+      if (Platform.isAndroid && file.path.startsWith('content://')) {
+        final result = await _androidChannel.invokeMethod<bool>(
+          'deleteContentUri',
+          <String, dynamic>{'uri': file.path},
+        );
+        deleted = result == true;
+        if (!mounted) return;
+        if (!deleted) {
+          messenger.showSnackBar(SnackBar(content: Text(l.cannotDeleteFile)));
+          return;
+        }
+      } else {
+        final path = await _resolvedPathFuture;
+        if (!mounted) return;
+        if (path.isEmpty) {
+          messenger.showSnackBar(SnackBar(content: Text(l.cannotDeleteFile)));
+          return;
+        }
+        final f = File(path);
+        if (f.existsSync()) {
+          f.deleteSync();
+          deleted = true;
+        }
+      }
+      if (deleted) {
+        widget.onFileDeleted?.call();
+        if (mounted) navigator.pop(null);
+      } else {
+        if (mounted) messenger.showSnackBar(SnackBar(content: Text(l.deleteFailed)));
+      }
+    } on PlatformException catch (e) {
+      if (mounted) {
+        messenger.showSnackBar(
+          SnackBar(content: Text('${l.deleteFailed}: ${e.message ?? e.code}')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        messenger.showSnackBar(
+          SnackBar(content: Text('${l.deleteFailed}: $e')),
+        );
+      }
+    }
   }
 }
 

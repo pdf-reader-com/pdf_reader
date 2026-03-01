@@ -134,6 +134,24 @@ class AppLocalizationsZh extends AppLocalizations {
   String get moreDeleteTodo => '删除功能待实现';
 
   @override
+  String get deleteConfirmTitle => '删除文件？';
+
+  @override
+  String get deleteConfirmMessage => '此文件将被永久删除，且无法恢复。';
+
+  @override
+  String get shareFailed => '分享失败';
+
+  @override
+  String get openWithOtherFailed => '无法使用其他应用打开';
+
+  @override
+  String get deleteFailed => '删除文件失败';
+
+  @override
+  String get cannotDeleteFile => '无法在此处删除该文件。';
+
+  @override
   String get toolsTitle => '工具';
 
   @override
@@ -434,6 +452,24 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get moreDeleteTodo => '刪除功能待實作';
+
+  @override
+  String get deleteConfirmTitle => '刪除檔案？';
+
+  @override
+  String get deleteConfirmMessage => '此檔案將被永久刪除，且無法復原。';
+
+  @override
+  String get shareFailed => '分享失敗';
+
+  @override
+  String get openWithOtherFailed => '無法使用其他應用程式開啟';
+
+  @override
+  String get deleteFailed => '刪除檔案失敗';
+
+  @override
+  String get cannotDeleteFile => '無法在此處刪除該檔案。';
 
   @override
   String get toolsTitle => '工具';

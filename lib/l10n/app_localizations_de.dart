@@ -138,6 +138,25 @@ class AppLocalizationsDe extends AppLocalizations {
   String get moreDeleteTodo => 'Löschfunktion wird noch implementiert';
 
   @override
+  String get deleteConfirmTitle => 'Datei löschen?';
+
+  @override
+  String get deleteConfirmMessage =>
+      'Diese Datei wird dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get shareFailed => 'Teilen fehlgeschlagen';
+
+  @override
+  String get openWithOtherFailed => 'Mit anderer App öffnen fehlgeschlagen';
+
+  @override
+  String get deleteFailed => 'Datei konnte nicht gelöscht werden';
+
+  @override
+  String get cannotDeleteFile => 'Diese Datei kann hier nicht gelöscht werden.';
+
+  @override
   String get toolsTitle => 'Werkzeuge';
 
   @override

@@ -275,6 +275,9 @@ class _ReaderHomePageState extends State<ReaderHomePage>
       MaterialPageRoute(
         builder: (_) => FilePreviewPage(
           file: file,
+          onFileDeleted: () {
+            _removeFromList(file);
+          },
         ),
       ),
     );

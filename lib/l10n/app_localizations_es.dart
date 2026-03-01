@@ -141,6 +141,25 @@ class AppLocalizationsEs extends AppLocalizations {
       'La función de eliminar está pendiente de implementación';
 
   @override
+  String get deleteConfirmTitle => '¿Eliminar archivo?';
+
+  @override
+  String get deleteConfirmMessage =>
+      'Este archivo se eliminará permanentemente. Esta acción no se puede deshacer.';
+
+  @override
+  String get shareFailed => 'Error al compartir';
+
+  @override
+  String get openWithOtherFailed => 'No se pudo abrir con otra aplicación';
+
+  @override
+  String get deleteFailed => 'Error al eliminar el archivo';
+
+  @override
+  String get cannotDeleteFile => 'Este archivo no se puede eliminar aquí.';
+
+  @override
   String get toolsTitle => 'Herramientas';
 
   @override
