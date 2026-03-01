@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -14,8 +15,10 @@ import 'file_preview_page.dart';
 import 'settings_page.dart';
 import 'tools_page.dart';
 
-/// Android 上通过 content URI 列出/打开文件时使用
+/// 各平台通过此 MethodChannel 与原生通信（目录选择、content URI、初始打开文件等）
 const _androidChannel = MethodChannel('com.pdf_reader/pdf_reader');
+/// macOS 用 EventChannel 在原生收到「打开文件」时主动推送路径（解决系统晚于首帧交付的问题）
+final _macOsOpenFileEventChannel = EventChannel('com.pdf_reader/pdf_reader_events');
 
 class ReaderHomePage extends StatefulWidget {
   const ReaderHomePage({super.key});
@@ -28,6 +31,9 @@ class _ReaderHomePageState extends State<ReaderHomePage> {
   int _currentIndex = 0;
   FileType? _filterType;
   bool _isScanning = false;
+
+  /// macOS：监听「用本应用打开」推送的路径，需在 dispose 中取消
+  StreamSubscription<dynamic>? _macOsOpenFileSubscription;
 
   /// 当前索引到的所有文件
   final List<ReaderFile> _allFiles = [];
@@ -51,6 +57,60 @@ class _ReaderHomePageState extends State<ReaderHomePage> {
   void initState() {
     super.initState();
     _loadPersistentState();
+    if (Platform.isMacOS) {
+      _macOsOpenFileSubscription = _macOsOpenFileEventChannel
+          .receiveBroadcastStream()
+          .listen(_onMacOsOpenFileEvent, onError: (_) {});
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) => _openInitialFileIfAny());
+  }
+
+  @override
+  void dispose() {
+    _macOsOpenFileSubscription?.cancel();
+    super.dispose();
+  }
+
+  /// macOS 原生在 application(openFiles:) 等里推送路径时调用
+  void _onMacOsOpenFileEvent(dynamic path) {
+    if (!mounted || path is! String || path.isEmpty) return;
+    final file = ReaderFile.fromPath(path);
+    if (file.type == FileType.other) return;
+    _onTapFile(file);
+  }
+
+  /// 若由“用本应用打开”启动，则获取传入的文件并打开预览
+  Future<void> _openInitialFileIfAny() async {
+    if (!mounted) return;
+    try {
+      // Android：在 onCreate 中已保存 intent，稍作延迟后取一次，必要时再重试一次
+      if (Platform.isAndroid) {
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+      }
+      if (!mounted) return;
+      String? uri = await _androidChannel.invokeMethod<String>('getInitialFileUri');
+      // macOS：除 EventChannel 推送外，再轮询 getInitialFileUri 作为后备（系统可能先于监听交付）
+      // iOS：系统可能在窗口显示后才交付文件，需多次延迟重试
+      if ((uri == null || uri.isEmpty) && mounted && (Platform.isMacOS || Platform.isIOS)) {
+        final delays = Platform.isMacOS ? [100, 200, 400, 800, 1600] : [100, 200, 400];
+        for (final delay in delays) {
+          await Future<void>.delayed(Duration(milliseconds: delay));
+          if (!mounted) return;
+          uri = await _androidChannel.invokeMethod<String>('getInitialFileUri');
+          if (uri != null && uri.isNotEmpty) break;
+        }
+      } else if ((uri == null || uri.isEmpty) && Platform.isAndroid && mounted) {
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+        if (!mounted) return;
+        uri = await _androidChannel.invokeMethod<String>('getInitialFileUri');
+      }
+      if (uri == null || uri.isEmpty || !mounted) return;
+      final file = ReaderFile.fromPath(uri);
+      if (file.type == FileType.other) return;
+      _onTapFile(file);
+    } on PlatformException catch (_) {
+      // 非 Android/iOS/macOS 或未实现时忽略
+    } catch (_) {}
   }
 
   Future<void> _loadPersistentState() async {

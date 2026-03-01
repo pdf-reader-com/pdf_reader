@@ -13,15 +13,33 @@ import java.util.Locale
 
 class MainActivity : FlutterActivity() {
 
+    override fun onCreate(savedInstanceState: android.os.Bundle?) {
+        // 必须在 super.onCreate() 之前保存，否则 Flutter 引擎启动后 Dart 会先调用 getInitialFileUri 得到 null
+        if (intent?.action == Intent.ACTION_VIEW && intent?.data != null) {
+            initialFileUri = intent!!.data!!.toString()
+        }
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.action == Intent.ACTION_VIEW && intent.data != null) {
+            initialFileUri = intent.data!!.toString()
+        }
+    }
+
     companion object {
         private const val CHANNEL = "com.pdf_reader/pdf_reader"
         private const val REQUEST_PICK_TREE = 9001
         private val SUPPORTED_EXT = setOf(
-            "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "md", "markdown"
+            "pdf", "epub", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "md", "markdown"
         )
     }
 
     private var pendingPickResult: MethodChannel.Result? = null
+
+    /** 从“用本应用打开”或冷启动传入的文件 URI，供 Flutter 通过 getInitialFileUri 获取 */
+    private var initialFileUri: String? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -60,6 +78,15 @@ class MainActivity : FlutterActivity() {
                     } catch (e: Exception) {
                         result.error("OPEN_FAILED", e.message, null)
                     }
+                }
+                "getInitialFileUri" -> {
+                    val uri = initialFileUri
+                        ?: intent?.takeIf { it.action == Intent.ACTION_VIEW }?.data?.toString()
+                    initialFileUri = null
+                    if (uri != null && intent?.action == Intent.ACTION_VIEW) {
+                        setIntent(Intent())
+                    }
+                    result.success(uri)
                 }
                 else -> result.notImplemented()
             }
