@@ -529,6 +529,60 @@ abstract class AppLocalizations {
   /// **'Version and source code'**
   String get settingsAboutSubtitle;
 
+  /// No description provided for @settingsAllFilesAccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All files access'**
+  String get settingsAllFilesAccessTitle;
+
+  /// No description provided for @settingsAllFilesAccessSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant to scan all supported files on device'**
+  String get settingsAllFilesAccessSubtitle;
+
+  /// No description provided for @settingsAllFilesAccessGranted.
+  ///
+  /// In en, this message translates to:
+  /// **'Granted'**
+  String get settingsAllFilesAccessGranted;
+
+  /// No description provided for @settingsAllFilesAccessRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Grant access'**
+  String get settingsAllFilesAccessRequest;
+
+  /// No description provided for @settingsAllFilesAccessChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking…'**
+  String get settingsAllFilesAccessChecking;
+
+  /// No description provided for @settingsAllFilesAccessRequestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to open settings'**
+  String get settingsAllFilesAccessRequestFailed;
+
+  /// No description provided for @scanAllFilesTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan all files on device'**
+  String get scanAllFilesTooltip;
+
+  /// No description provided for @scanAllFilesPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'All files access was denied. Scan cancelled.'**
+  String get scanAllFilesPermissionDenied;
+
+  /// No description provided for @scanAllFilesProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning all files…'**
+  String get scanAllFilesProgress;
+
   /// No description provided for @aboutTitle.
   ///
   /// In en, this message translates to:
@@ -588,6 +642,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open in system browser'**
   String get openInSystemBrowser;
+
+  /// No description provided for @removeFromList.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from list'**
+  String get removeFromList;
+
+  /// No description provided for @select.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get select;
+
+  /// No description provided for @cancelSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelSelect;
+
+  /// No description provided for @batchRemoveFromList.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from list'**
+  String get batchRemoveFromList;
+
+  /// No description provided for @batchRemoveConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {count} item(s) from list? Files on disk will not be deleted.'**
+  String batchRemoveConfirm(int count);
+
+  /// No description provided for @removedFromList.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from list'**
+  String get removedFromList;
+
+  /// No description provided for @selectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all'**
+  String get selectAll;
+
+  /// No description provided for @deselectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Deselect all'**
+  String get deselectAll;
+
+  /// No description provided for @searchFilesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by filename'**
+  String get searchFilesHint;
 }
 
 class _AppLocalizationsDelegate

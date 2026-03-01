@@ -218,6 +218,33 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsAboutSubtitle => '版本与开源地址';
 
   @override
+  String get settingsAllFilesAccessTitle => '全盘访问权限';
+
+  @override
+  String get settingsAllFilesAccessSubtitle => '授权后可扫描设备上所有受支持的文件';
+
+  @override
+  String get settingsAllFilesAccessGranted => '已授权';
+
+  @override
+  String get settingsAllFilesAccessRequest => '去授权';
+
+  @override
+  String get settingsAllFilesAccessChecking => '检测中…';
+
+  @override
+  String get settingsAllFilesAccessRequestFailed => '无法打开设置页';
+
+  @override
+  String get scanAllFilesTooltip => '扫描设备全部文件';
+
+  @override
+  String get scanAllFilesPermissionDenied => '未获得全盘权限，已取消扫描。';
+
+  @override
+  String get scanAllFilesProgress => '正在扫描全部文件…';
+
+  @override
   String get aboutTitle => '关于';
 
   @override
@@ -248,6 +275,35 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get openInSystemBrowser => '用系统浏览器打开';
+
+  @override
+  String get removeFromList => '从列表移除';
+
+  @override
+  String get select => '选择';
+
+  @override
+  String get cancelSelect => '取消';
+
+  @override
+  String get batchRemoveFromList => '批量移除';
+
+  @override
+  String batchRemoveConfirm(int count) {
+    return '从列表移除 $count 项？仅从列表移除，不会删除磁盘上的文件。';
+  }
+
+  @override
+  String get removedFromList => '已从列表移除';
+
+  @override
+  String get selectAll => '全选';
+
+  @override
+  String get deselectAll => '取消全选';
+
+  @override
+  String get searchFilesHint => '按文件名搜索';
 }
 
 /// The translations for Chinese, as used in Taiwan (`zh_TW`).

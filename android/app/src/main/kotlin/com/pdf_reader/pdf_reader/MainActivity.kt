@@ -2,7 +2,10 @@ package com.pdf_reader.pdf_reader
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
 import android.provider.OpenableColumns
+import android.provider.Settings
 import androidx.documentfile.provider.DocumentFile
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -10,6 +13,7 @@ import io.flutter.plugin.common.MethodChannel
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Locale
+import java.util.concurrent.Executors
 
 class MainActivity : FlutterActivity() {
 
@@ -87,6 +91,43 @@ class MainActivity : FlutterActivity() {
                         setIntent(Intent())
                     }
                     result.success(uri)
+                }
+                "hasAllFilesAccess" -> {
+                    result.success(hasAllFilesAccess())
+                }
+                "requestAllFilesAccess" -> {
+                    if (hasAllFilesAccess()) {
+                        result.success(true)
+                        return@setMethodCallHandler
+                    }
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                        result.success(false)
+                        return@setMethodCallHandler
+                    }
+                    try {
+                        val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
+                            data = Uri.fromParts("package", packageName, null)
+                        }
+                        startActivity(intent)
+                        result.success(null) // 仅表示已打开设置页，不表示用户已授权
+                    } catch (e: Exception) {
+                        result.error("OPEN_SETTINGS_FAILED", e.message, null)
+                    }
+                }
+                "listAllFilesFromStorage" -> {
+                    if (!hasAllFilesAccess()) {
+                        result.error("NO_ACCESS", "All files access not granted", null)
+                        return@setMethodCallHandler
+                    }
+                    val executor = Executors.newSingleThreadExecutor()
+                    executor.execute {
+                        try {
+                            val list = listAllFilesFromStorageSync()
+                            runOnUiThread { result.success(list) }
+                        } catch (e: Exception) {
+                            runOnUiThread { result.error("SCAN_FAILED", e.message, null) }
+                        }
+                    }
                 }
                 else -> result.notImplemented()
             }
@@ -166,5 +207,45 @@ class MainActivity : FlutterActivity() {
             }
         }
         return uri.lastPathSegment
+    }
+
+    private fun hasAllFilesAccess(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Environment.isExternalStorageManager()
+        } else {
+            false
+        }
+    }
+
+    /** 在已具备全盘权限时递归扫描外部存储，返回与 listFilesFromTreeUri 相同格式的列表（path 为绝对路径） */
+    private fun listAllFilesFromStorageSync(): List<Map<String, Any?>> {
+        val out = mutableListOf<Map<String, Any?>>()
+        val root = Environment.getExternalStorageDirectory()
+        if (root.exists() && root.isDirectory) {
+            collectFilesFromFile(root, out)
+        }
+        return out
+    }
+
+    private fun collectFilesFromFile(dir: File, out: MutableList<Map<String, Any?>>) {
+        val files = dir.listFiles() ?: return
+        for (file in files) {
+            if (file.isDirectory) {
+                collectFilesFromFile(file, out)
+            } else {
+                val name = file.name ?: continue
+                val ext = name.substringAfterLast('.', "").lowercase(Locale.ROOT)
+                if (ext !in SUPPORTED_EXT) continue
+                out.add(
+                    mapOf(
+                        "path" to file.absolutePath,
+                        "name" to name,
+                        "size" to file.length(),
+                        "lastModified" to file.lastModified(),
+                        "extension" to ".$ext"
+                    )
+                )
+            }
+        }
     }
 }

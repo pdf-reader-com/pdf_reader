@@ -231,6 +231,35 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsAboutSubtitle => 'Version and source code';
 
   @override
+  String get settingsAllFilesAccessTitle => 'All files access';
+
+  @override
+  String get settingsAllFilesAccessSubtitle =>
+      'Grant to scan all supported files on device';
+
+  @override
+  String get settingsAllFilesAccessGranted => 'Granted';
+
+  @override
+  String get settingsAllFilesAccessRequest => 'Grant access';
+
+  @override
+  String get settingsAllFilesAccessChecking => 'Checking…';
+
+  @override
+  String get settingsAllFilesAccessRequestFailed => 'Failed to open settings';
+
+  @override
+  String get scanAllFilesTooltip => 'Scan all files on device';
+
+  @override
+  String get scanAllFilesPermissionDenied =>
+      'All files access was denied. Scan cancelled.';
+
+  @override
+  String get scanAllFilesProgress => 'Scanning all files…';
+
+  @override
   String get aboutTitle => 'About';
 
   @override
@@ -261,4 +290,33 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get openInSystemBrowser => 'Open in system browser';
+
+  @override
+  String get removeFromList => 'Remove from list';
+
+  @override
+  String get select => 'Select';
+
+  @override
+  String get cancelSelect => 'Cancel';
+
+  @override
+  String get batchRemoveFromList => 'Remove from list';
+
+  @override
+  String batchRemoveConfirm(int count) {
+    return 'Remove $count item(s) from list? Files on disk will not be deleted.';
+  }
+
+  @override
+  String get removedFromList => 'Removed from list';
+
+  @override
+  String get selectAll => 'Select all';
+
+  @override
+  String get deselectAll => 'Deselect all';
+
+  @override
+  String get searchFilesHint => 'Search by filename';
 }
