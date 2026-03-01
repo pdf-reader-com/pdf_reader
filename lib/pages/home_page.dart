@@ -17,8 +17,8 @@ import 'tools_page.dart';
 
 /// 各平台通过此 MethodChannel 与原生通信（目录选择、content URI、初始打开文件等）
 const _androidChannel = MethodChannel('com.pdf_reader/pdf_reader');
-/// macOS 用 EventChannel 在原生收到「打开文件」时主动推送路径（解决系统晚于首帧交付的问题）
-final _macOsOpenFileEventChannel = EventChannel('com.pdf_reader/pdf_reader_events');
+/// macOS/Android 用 EventChannel 在原生收到「打开文件」时主动推送路径或 URI（应用已运行时必走此路）
+final _openFileEventChannel = EventChannel('com.pdf_reader/pdf_reader_events');
 
 class ReaderHomePage extends StatefulWidget {
   const ReaderHomePage({super.key});
@@ -40,8 +40,8 @@ class _ReaderHomePageState extends State<ReaderHomePage>
   /// 点击「扫描全部」时未授权，已跳转设置；返回后若仍未授权则提示失败
   bool _pendingScanAllAfterResume = false;
 
-  /// macOS：监听「用本应用打开」推送的路径，需在 dispose 中取消
-  StreamSubscription<dynamic>? _macOsOpenFileSubscription;
+  /// macOS/Android：监听「用本应用打开」推送的路径或 content URI，需在 dispose 中取消
+  StreamSubscription<dynamic>? _openFileEventSubscription;
 
   /// 当前索引到的所有文件
   final List<ReaderFile> _allFiles = [];
@@ -72,10 +72,10 @@ class _ReaderHomePageState extends State<ReaderHomePage>
     _searchController.addListener(_onSearchControllerChanged);
     WidgetsBinding.instance.addObserver(this);
     _loadPersistentState();
-    if (Platform.isMacOS) {
-      _macOsOpenFileSubscription = _macOsOpenFileEventChannel
+    if (Platform.isMacOS || Platform.isAndroid) {
+      _openFileEventSubscription = _openFileEventChannel
           .receiveBroadcastStream()
-          .listen(_onMacOsOpenFileEvent, onError: (_) {});
+          .listen(_onOpenFileEvent, onError: (_) {});
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _openInitialFileIfAny();
@@ -94,7 +94,7 @@ class _ReaderHomePageState extends State<ReaderHomePage>
     _searchController.removeListener(_onSearchControllerChanged);
     _searchController.dispose();
     WidgetsBinding.instance.removeObserver(this);
-    _macOsOpenFileSubscription?.cancel();
+    _openFileEventSubscription?.cancel();
     super.dispose();
   }
 
@@ -115,8 +115,8 @@ class _ReaderHomePageState extends State<ReaderHomePage>
     });
   }
 
-  /// macOS 原生在 application(openFiles:) 等里推送路径时调用
-  void _onMacOsOpenFileEvent(dynamic path) {
+  /// macOS/Android 原生在「用本应用打开」时推送路径或 content URI 时调用
+  void _onOpenFileEvent(dynamic path) {
     if (!mounted || path is! String || path.isEmpty) return;
     final file = ReaderFile.fromPath(path);
     if (file.type == FileType.other) return;

@@ -10,6 +10,7 @@ import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
 import java.io.FileOutputStream
@@ -28,13 +29,20 @@ class MainActivity : FlutterActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        setIntent(intent)
         if (intent.action == Intent.ACTION_VIEW && intent.data != null) {
-            initialFileUri = intent.data!!.toString()
+            val uri = intent.data!!.toString()
+            initialFileUri = uri
+            // 应用已运行时，通过 EventChannel 推送给 Flutter，以便跳转到文件预览
+            runOnUiThread {
+                openFileEventSink?.success(uri)
+            }
         }
     }
 
     companion object {
         private const val CHANNEL = "com.pdf_reader/pdf_reader"
+        private const val EVENT_CHANNEL = "com.pdf_reader/pdf_reader_events"
         private const val REQUEST_PICK_TREE = 9001
         private val SUPPORTED_EXT = setOf(
             "pdf", "epub", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "md", "markdown"
@@ -45,6 +53,9 @@ class MainActivity : FlutterActivity() {
 
     /** 从“用本应用打开”或冷启动传入的文件 URI，供 Flutter 通过 getInitialFileUri 获取 */
     private var initialFileUri: String? = null
+
+    /** 应用已运行时收到「用本应用打开」时，通过 EventChannel 推送给 Flutter 以跳转预览 */
+    private var openFileEventSink: EventChannel.EventSink? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -157,6 +168,16 @@ class MainActivity : FlutterActivity() {
                 else -> result.notImplemented()
             }
         }
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, EVENT_CHANNEL).setStreamHandler(
+            object : EventChannel.StreamHandler {
+                override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+                    openFileEventSink = events
+                }
+                override fun onCancel(arguments: Any?) {
+                    openFileEventSink = null
+                }
+            }
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
