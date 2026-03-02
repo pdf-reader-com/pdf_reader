@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pdf_reader/l10n/app_localizations.dart';
+import 'package:pdf_reader/pages/pandoc_page.dart';
 import 'package:pdf_reader/pages/pdfcraft_page.dart';
 import 'package:pdf_reader/services/pdfcraft_server.dart';
 
@@ -29,6 +30,18 @@ class ToolsPage extends StatelessWidget {
             Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (context) => const PdfCraftPage(),
+              ),
+            );
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.description_outlined),
+          title: const Text('Pandoc'),
+          subtitle: const Text('浏览器版文档转换（Pandoc）'),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => const PandocPage(),
               ),
             );
           },
