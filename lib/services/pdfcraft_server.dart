@@ -30,6 +30,10 @@ class PdfCraftServer {
   /// 远程 PDFCraft 页面，在本地未解压/未就绪时使用
   static const String remoteUrl = 'https://pdfcraft.devtoolcafe.com/';
 
+  /// GitHub Releases API：用于获取 PDFCraft 工具站最新版构建 zip（非源码）。
+  static const String _githubLatestApi =
+    'https://api.github.com/repos/PDFCraftTool/pdfcraft/releases/latest';
+
   /// 本地服务是否已启动（解压完成且 shelf 已监听）
   static bool get isReady => _started;
 
@@ -207,5 +211,167 @@ class PdfCraftServer {
     _assetsDirPath = contentDir.path;
     await versionFile.writeAsString(currentVersion, flush: true);
     return _assetsDirPath!;
+  }
+
+  /// 从 GitHub Releases 下载最新版 PDFCraft 静态站点 zip 并覆盖本地内容目录。
+  ///
+  /// - 通过 Releases API 获取最新 Release，而不是下载源码压缩包；
+  /// - 从 assets 中优先选择名称形如 `pdfcraft-*.zip` 的构建产物，避免选到「Source code」；
+  /// - 下载到应用持久目录下的临时文件，再解压覆盖 `content` 目录；
+  /// - 更新完成后，下次 `ensureStarted` 会直接复用该目录，不再从内置 zip 解压；
+  /// - 可选 [onProgress] 回调用于上报 0.0–1.0 的下载进度。
+  static Future<void> updateFromLatestRelease({
+    void Function(double progress)? onProgress,
+  }) async {
+    try {
+      // 1. 计算持久目录 & 版本信息（保持与 _ensureAssetsExtracted 一致）
+      final supportDir = await getApplicationSupportDirectory();
+      final rootDir = Directory(p.join(supportDir.path, 'pdfcraft'));
+      final contentDir = Directory(p.join(rootDir.path, 'content'));
+      final versionFile = File(p.join(rootDir.path, 'version.txt'));
+      await rootDir.create(recursive: true);
+      await contentDir.create(recursive: true);
+
+      final packageInfo = await PackageInfo.fromPlatform();
+      final currentVersion = '${packageInfo.version}+${packageInfo.buildNumber}';
+
+      final client = HttpClient();
+      try {
+        // 2. 调用 GitHub Releases API 获取最新 Release 信息
+        final uri = Uri.parse(_githubLatestApi);
+        final request = await client.getUrl(uri);
+        request.headers.set(
+          HttpHeaders.userAgentHeader,
+          'pdf_reader/${packageInfo.version} (+https://github.com/PDFCraftTool/pdfcraft)',
+        );
+        final response = await request.close();
+        if (response.statusCode != 200) {
+          throw HttpException(
+            'GitHub releases API returned ${response.statusCode}',
+            uri: uri,
+          );
+        }
+
+        final body = await utf8.decodeStream(response);
+        final Map<String, dynamic> jsonMap =
+            json.decode(body) as Map<String, dynamic>;
+
+        final List<dynamic> assets =
+            (jsonMap['assets'] as List<dynamic>?) ?? const [];
+        if (assets.isEmpty) {
+          throw StateError('No assets found in latest GitHub release.');
+        }
+
+        Map<String, dynamic>? targetAsset;
+
+        // 优先选择名称中包含 pdfcraft 且以 .zip 结尾的资产，规避源码包。
+        for (final dynamic a in assets) {
+          if (a is! Map<String, dynamic>) continue;
+          final name = (a['name'] ?? '').toString();
+          if (name.toLowerCase().contains('pdfcraft') &&
+              name.toLowerCase().endsWith('.zip')) {
+            targetAsset = a;
+            break;
+          }
+        }
+
+        // 次选：任意以 .zip 结尾但名称中不包含诸如 "source code" 的资产。
+        targetAsset ??= assets.cast<Map<String, dynamic>?>().firstWhere(
+          (a) {
+            if (a == null) return false;
+            final name = (a['name'] ?? '').toString().toLowerCase();
+            return name.endsWith('.zip') &&
+                !name.contains('source code') &&
+                !name.contains('source-code');
+          },
+          orElse: () => throw StateError(
+            'No suitable .zip asset found in latest GitHub release.',
+          ),
+        );
+
+        // 经过上面的逻辑，如果没有抛异常，则 targetAsset 一定非空，这里用局部非空变量方便空安全检查。
+        final assetMap = targetAsset!;
+
+        final downloadUrl =
+            (assetMap['browser_download_url'] ?? '').toString();
+        if (downloadUrl.isEmpty) {
+          throw StateError('browser_download_url is empty for selected asset.');
+        }
+
+        final tagName = (jsonMap['tag_name'] ?? '').toString();
+
+        // 3. 下载 zip 到临时文件
+        final tmpFile =
+            File(p.join(rootDir.path, 'latest_pdfcraft_download.tmp.zip'));
+        if (await tmpFile.exists()) {
+          try {
+            await tmpFile.delete();
+          } catch (_) {}
+        }
+
+        final downloadUri = Uri.parse(downloadUrl);
+        final downloadRequest = await client.getUrl(downloadUri);
+        downloadRequest.headers.set(
+          HttpHeaders.userAgentHeader,
+          'pdf_reader/${packageInfo.version} (+https://github.com/PDFCraftTool/pdfcraft)',
+        );
+        final downloadResponse = await downloadRequest.close();
+        if (downloadResponse.statusCode != 200) {
+          throw HttpException(
+            'Download asset failed with status ${downloadResponse.statusCode}',
+            uri: downloadUri,
+          );
+        }
+
+        final contentLength = downloadResponse.contentLength;
+        var received = 0;
+        final sink = tmpFile.openWrite();
+        await for (final chunk in downloadResponse) {
+          received += chunk.length;
+          sink.add(chunk);
+          if (onProgress != null && contentLength > 0) {
+            onProgress(received / contentLength);
+          }
+        }
+        await sink.close();
+
+        // 4. 覆盖 content 目录并解压新内容
+        if (await contentDir.exists()) {
+          try {
+            await contentDir.delete(recursive: true);
+          } catch (_) {}
+        }
+        await contentDir.create(recursive: true);
+
+        final bytes = await tmpFile.readAsBytes();
+        final archive = ZipDecoder().decodeBytes(bytes);
+
+        for (final file in archive) {
+          final filename = p.join(contentDir.path, file.name);
+          if (file.isFile) {
+            final outFile = File(filename);
+            await outFile.parent.create(recursive: true);
+            await outFile.writeAsBytes(
+              (file.content as List<int>),
+              flush: true,
+            );
+          } else {
+            await Directory(filename).create(recursive: true);
+          }
+        }
+
+        _assetsDirPath = contentDir.path;
+        await versionFile.writeAsString(currentVersion, flush: true);
+
+        debugPrint(
+          'PdfCraftServer: updated assets from GitHub release $tagName to ${_assetsDirPath!}',
+        );
+      } finally {
+        client.close(force: true);
+      }
+    } catch (e, st) {
+      debugPrint('PdfCraftServer updateFromLatestRelease error: $e\n$st');
+      rethrow;
+    }
   }
 }

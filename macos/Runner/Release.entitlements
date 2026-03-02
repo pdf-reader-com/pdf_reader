@@ -7,6 +7,9 @@
 	<!-- 允许 WebView 发起出站网络连接（加载 HTTP/HTTPS 页面） -->
 	<key>com.apple.security.network.client</key>
 	<true/>
+	<!-- 允许应用在本机监听端口（如 127.0.0.1:28765），仅用于本地 HTTP 服务 -->
+	<key>com.apple.security.network.server</key>
+	<true/>
 	<!-- 允许用户选择的文件/目录的读写访问，用于文件扫描和预览 -->
 	<key>com.apple.security.files.user-selected.read-write</key>
 	<true/>
