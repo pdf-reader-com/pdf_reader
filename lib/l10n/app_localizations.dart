@@ -469,6 +469,18 @@ abstract class AppLocalizations {
   /// **'Built-in PDF tools (merge, split, convert, etc.)'**
   String get toolsPdfCraftSubtitle;
 
+  /// No description provided for @toolsPandoc.
+  ///
+  /// In en, this message translates to:
+  /// **'Pandoc'**
+  String get toolsPandoc;
+
+  /// No description provided for @toolsPandocSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Browser-based document converter (Pandoc)'**
+  String get toolsPandocSubtitle;
+
   /// No description provided for @settingsTitle.
   ///
   /// In en, this message translates to:

@@ -198,6 +198,12 @@ class AppLocalizationsRu extends AppLocalizations {
       'Встроенные PDF-инструменты (объединение, разделение, конвертация и т.д.)';
 
   @override
+  String get toolsPandoc => 'Pandoc';
+
+  @override
+  String get toolsPandocSubtitle => 'Browser-based document converter (Pandoc)';
+
+  @override
   String get settingsTitle => 'Настройки';
 
   @override

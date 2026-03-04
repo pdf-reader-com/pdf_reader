@@ -188,6 +188,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get toolsPdfCraftSubtitle => '内置 PDF 工具（合并、拆分、转换等）';
 
   @override
+  String get toolsPandoc => 'Pandoc';
+
+  @override
+  String get toolsPandocSubtitle => '浏览器版文档转换（Pandoc）';
+
+  @override
   String get settingsTitle => '设置';
 
   @override
@@ -506,6 +512,12 @@ class AppLocalizationsZhTw extends AppLocalizationsZh {
 
   @override
   String get toolsPdfCraftSubtitle => '內建 PDF 工具（合併、分割、轉換等）';
+
+  @override
+  String get toolsPandoc => 'Pandoc';
+
+  @override
+  String get toolsPandocSubtitle => '瀏覽器版文件轉換（Pandoc）';
 
   @override
   String get settingsTitle => '設定';

@@ -189,6 +189,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get toolsPdfCraftSubtitle => '内蔵 PDF ツール（結合・分割・変換など）';
 
   @override
+  String get toolsPandoc => 'Pandoc';
+
+  @override
+  String get toolsPandocSubtitle => 'Browser-based document converter (Pandoc)';
+
+  @override
   String get settingsTitle => '設定';
 
   @override

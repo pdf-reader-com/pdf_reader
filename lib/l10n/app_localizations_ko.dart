@@ -190,6 +190,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get toolsPdfCraftSubtitle => '내장 PDF 도구 (병합, 분할, 변환 등)';
 
   @override
+  String get toolsPandoc => 'Pandoc';
+
+  @override
+  String get toolsPandocSubtitle => 'Browser-based document converter (Pandoc)';
+
+  @override
   String get settingsTitle => '설정';
 
   @override

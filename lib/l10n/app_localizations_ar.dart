@@ -195,6 +195,12 @@ class AppLocalizationsAr extends AppLocalizations {
       'أدوات PDF مدمجة (دمج، تقسيم، تحويل، إلخ)';
 
   @override
+  String get toolsPandoc => 'Pandoc';
+
+  @override
+  String get toolsPandocSubtitle => 'Browser-based document converter (Pandoc)';
+
+  @override
   String get settingsTitle => 'الإعدادات';
 
   @override

@@ -36,8 +36,8 @@ class ToolsPage extends StatelessWidget {
         ),
         ListTile(
           leading: const Icon(Icons.description_outlined),
-          title: const Text('Pandoc'),
-          subtitle: const Text('浏览器版文档转换（Pandoc）'),
+          title: Text(l.toolsPandoc),
+          subtitle: Text(l.toolsPandocSubtitle),
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute<void>(

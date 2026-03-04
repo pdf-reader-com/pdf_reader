@@ -66,6 +66,8 @@
   "toolsReadingSettingsSubtitle": "Font size, theme, page turning mode, etc.",
   "toolsPdfCraft": "PDFCraft",
   "toolsPdfCraftSubtitle": "Built-in PDF tools (merge, split, convert, etc.)",
+  "toolsPandoc": "Pandoc",
+  "toolsPandocSubtitle": "Browser-based document converter (Pandoc)",
   "settingsTitle": "Settings",
   "settingsLanguageTitle": "Language",
   "settingsLanguageSubtitle": "Interface language",
