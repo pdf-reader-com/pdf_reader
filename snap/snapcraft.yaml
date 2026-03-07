@@ -1,0 +1,21 @@
+name: pdf-reader
+version: 1.0.0
+summary: PDF Reader
+description: PDF Reader - A PDF and document reader application supporting PDF, DOCX, EPUB and more.
+
+confinement: strict
+base: core22
+grade: stable
+
+apps:
+  pdf-reader:
+    command: pdf_reader
+    extensions: [gnome]
+    plugs:
+      - network
+      - network-bind
+parts:
+  pdf-reader:
+    source: .
+    plugin: flutter
+    flutter-target: lib/main.dart

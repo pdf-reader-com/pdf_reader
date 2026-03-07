@@ -1,10 +1,8 @@
-# pdf_reader
+# PDF Reader
 
-A new PDF reader project. Supports preview of PDF, Markdown, docx, ppt, xlsx and other document formats.
+跨平台文档阅读应用，支持 PDF、DOCX、EPUB 等多种格式。
 
-## PDF editor
-
-> https://github.com/ShizukuIchi/pdf-editor
+- 项目地址: https://github.com/iotserv/pdf_reader
 
 ## Getting Started
 

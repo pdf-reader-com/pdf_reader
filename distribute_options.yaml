@@ -1,0 +1,3 @@
+# flutter_distributor 配置 - 用于 Linux deb/rpm/AppImage 打包
+# 参考: https://github.com/leanflutter/flutter_distributor
+output: dist/

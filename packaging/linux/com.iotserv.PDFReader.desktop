@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+
+Name=PDF Reader
+Name[zh_CN]=PDF阅读器
+Comment=PDF Reader - A PDF and document reader
+Comment[zh_CN]=PDF阅读器 - PDF及文档阅读应用
+Categories=Office;Viewer;
+
+Icon=com.iotserv.PDFReader
+Exec=pdf_reader
+Terminal=false
+StartupWMClass=pdf_reader

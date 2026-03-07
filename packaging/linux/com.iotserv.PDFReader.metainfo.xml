@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    Generator for metainfo & .desktop files: 
+    https://www.freedesktop.org/software/appstream/metainfocreator/#/
+-->
+<component type="desktop-application">
+  <id>com.iotserv.PDFReader</id>
+  <name>PDF Reader</name>
+  <summary>PDF Reader - A PDF and document reader application</summary>
+  <developer_name>iotserv</developer_name>
+  <url type="homepage">https://github.com/iotserv/pdf_reader</url>
+  <metadata_license>AGPL-3.0</metadata_license>
+  <project_license>AGPL-3.0</project_license>
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+    <control>touch</control>
+  </supports>
+  <description>
+    <p>PDF Reader is a cross-platform document viewer supporting PDF, DOCX, EPUB and more.</p>
+    <p>Features</p>
+    <ul>
+      <li>PDF viewing and reading</li>
+      <li>DOCX document support</li>
+      <li>EPUB ebook support</li>
+      <li>Clean and modern interface</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">com.iotserv.PDFReader.desktop</launchable>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="1.0.0" date="2025-03-07" />
+  </releases>
+</component>

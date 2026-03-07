@@ -4,7 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pdf_reader/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-const _kSourceUrl = 'https://github.com/pdf-reader-com/pdf_reader';
+const _kSourceUrl = 'https://github.com/iotserv/pdf_reader';
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});

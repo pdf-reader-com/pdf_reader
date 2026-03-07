@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.0.0+3
 
 environment:
   sdk: ^3.8.1
@@ -71,6 +71,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
   flutter_launcher_icons: ^0.13.1
+  msix: ^3.16.13
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -87,7 +88,6 @@ flutter:
   assets:
     - assets/icon/app_icon.png
     - assets/web/
-    - assets/web/pdfcraft/pdfcraft.zip
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -140,3 +140,16 @@ flutter_launcher_icons:
   linux:
     generate: true
     image_path: "assets/icon/app_icon.png"
+
+msix_config:
+  display_name: PDF Reader
+  publisher: CN=5F64CEA2-463E-41A3-AE89-6979242A61DF
+  publisher_display_name: iotserv
+  identity_name: com.iotserv.pdfreader
+  #  msix_version: 1.0.0.0
+  logo_path: .\assets\icon\app_icon.png
+  start_menu_icon_path: .\assets\icon\app_icon.png
+  tile_icon_path: .\assets\icon\app_icon.png
+  icons_background_color: transparent
+  capabilities: internetClient
+  store: true
