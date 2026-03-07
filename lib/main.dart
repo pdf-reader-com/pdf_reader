@@ -3,7 +3,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:pdf_reader/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pdf_reader/pages/home_page.dart';
-import 'package:pdf_reader/services/pdfcraft_server.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,15 +36,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _loadSavedLocale();
     _loadSavedTheme();
-    _initPdfCraftServer();
-  }
-
-  Future<void> _initPdfCraftServer() async {
-    try {
-      await PdfCraftServer.ensureStarted();
-    } catch (_) {
-      // 启动失败时静默忽略，避免影响主应用
-    }
   }
 
   Future<void> _loadSavedLocale() async {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pdf_reader/l10n/app_localizations.dart';
 import 'package:pdf_reader/pages/pandoc_page.dart';
 import 'package:pdf_reader/pages/pdfcraft_page.dart';
-import 'package:pdf_reader/services/pdfcraft_server.dart';
 
 class ToolsPage extends StatelessWidget {
   const ToolsPage({super.key});

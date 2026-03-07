@@ -9,7 +9,6 @@ class Assets {
   static const AssetGenImage appIcon = AssetGenImage(
     'assets/icon/app_icon.png',
   );
-  static const String pdfcraft = 'assets/web/pdfcraft/pdfcraft.zip';
 }
 
 class AssetGenImage {
