@@ -16,6 +16,7 @@ apps:
       - network-bind
 parts:
   pdf-reader:
-    source: .
+    # 相对于 snapcraft.yaml 所在目录，.. 表示项目根目录（含 pubspec.yaml）
+    source: ..
     plugin: flutter
     flutter-target: lib/main.dart

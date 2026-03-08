@@ -1,0 +1,5 @@
+# App Store Connect 应用标识
+# 在 App Store Connect 创建应用后，将 app_identifier 改为你的 Bundle ID
+app_identifier("com.pdfreader.pdfReader")
+team_id(ENV["APPLE_TEAM_ID"])
+itc_team_id(ENV["APPLE_ITC_TEAM_ID"]) if ENV["APPLE_ITC_TEAM_ID"]

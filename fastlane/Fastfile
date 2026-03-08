@@ -1,0 +1,33 @@
+# Fastlane 配置：用于将 iOS/macOS 应用上传到 App Store Connect (TestFlight / App Store)
+# 需在 GitHub 配置 ENABLE_APP_STORE、App Store Connect API Key 及代码签名（match 或证书）
+
+default_platform(:ios)
+
+platform :ios do
+  desc "上传 iOS 应用到 TestFlight"
+  lane :release do
+    setup_ci if ENV["CI"]
+    # 若使用 fastlane match 管理签名，取消下行注释并配置 MATCH_PASSWORD、MATCH_GIT_URL
+    # match(type: "appstore", readonly: true)
+    # 使用 Flutter 构建已签名的 IPA（需先通过 match 或手动安装证书）
+    sh("flutter", "build", "ipa", "--release")
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true
+    )
+  end
+end
+
+platform :macos do
+  desc "上传 macOS 应用到 App Store Connect"
+  lane :release do
+    setup_ci if ENV["CI"]
+    # match(type: "appstore", readonly: true)  # 若使用 match
+    sh("flutter", "build", "macos", "--release")
+    # 需配置 notarization 与 deliver；详见 .github/doc/STORE_DEPLOY.md
+    # deliver(
+    #   skip_screenshots: true,
+    #   skip_metadata: true,
+    #   precheck_include_in_app_purchases: false
+    # )
+  end
+end

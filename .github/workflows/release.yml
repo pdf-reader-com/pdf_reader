@@ -1,3 +1,5 @@
+# 推送 v* tag 时构建多平台产物并发布到 GitHub Release；
+# 可选自动上传到 Snap / Google Play / Microsoft / App Store，详见 .github/doc/STORE_DEPLOY.md
 name: Release
 
 on:
@@ -12,6 +14,9 @@ jobs:
   android:
     name: Android
     runs-on: ubuntu-latest
+    env:
+      # 在仓库 Settings → Variables 中添加 ENABLE_GOOGLE_PLAY = true 以启用 Google Play 发布
+      ENABLE_GOOGLE_PLAY: ${{ vars.ENABLE_GOOGLE_PLAY || 'false' }}
     steps:
       - uses: actions/checkout@v4
       - name: Init Signature
@@ -54,10 +59,23 @@ jobs:
           files: |
             ./build/app/outputs/bundle/release/app-release.aab
           body_path: ./.github/doc/DownloadDescription.md
+      # Google Play 自动上传（需配置 GOOGLE_PLAY_SERVICE_ACCOUNT_JSON 与 ENABLE_GOOGLE_PLAY）
+      - name: Publish AAB to Google Play
+        if: env.ENABLE_GOOGLE_PLAY == 'true'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.pdf_reader.pdf_reader
+          releaseFiles: ./build/app/outputs/bundle/release/app-release.aab
+          track: internal
+          status: completed
 
   ios:
     name: iOS
     runs-on: macos-latest
+    env:
+      # 在仓库 Settings → Variables 中添加 ENABLE_APP_STORE = true 以启用 TestFlight/App Store 上传
+      ENABLE_APP_STORE: ${{ vars.ENABLE_APP_STORE || 'false' }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Dart
@@ -71,21 +89,46 @@ jobs:
           flutter-version: 3.32.8
       - run: flutter config --no-enable-android
       - run: flutter pub get
-      - run: flutter build ipa  --release --no-codesign
-      - run: zip -r ios-release.zip ./build/ios/archive
+      # 未启用 App Store 时：构建无签名 IPA 并发布到 GitHub Release
+      - name: Build iOS IPA (no-codesign)
+        if: env.ENABLE_APP_STORE != 'true'
+        run: flutter build ipa --release --no-codesign
+      - name: Zip and Release iOS to GitHub
+        if: env.ENABLE_APP_STORE != 'true' && startsWith(github.ref, 'refs/tags/')
+        run: zip -r ios-release.zip ./build/ios/archive
       - name: Release iOS IPA
+        if: env.ENABLE_APP_STORE != 'true' && startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: |
-            ios-release.zip
+          files: ios-release.zip
           body_path: ./.github/doc/DownloadDescription.md
+      # 启用 App Store 时：使用 Fastlane 构建签名 IPA 并上传 TestFlight（需配置签名与 API Key）
+      - name: Set up Ruby and Fastlane
+        if: env.ENABLE_APP_STORE == 'true'
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Install Fastlane
+        if: env.ENABLE_APP_STORE == 'true'
+        run: bundle install
+      - name: Build and upload iOS to TestFlight
+        if: env.ENABLE_APP_STORE == 'true'
+        env:
+          APPLE_APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APPLE_APP_STORE_CONNECT_KEY_ID }}
+          APPLE_APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APPLE_APP_STORE_CONNECT_ISSUER_ID }}
+          APPLE_APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APPLE_APP_STORE_CONNECT_KEY }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+        run: bundle exec fastlane ios release
 
   linux:
     name: Linux
     runs-on: ubuntu-latest
     env:
       SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
+      # 在仓库 Settings → Variables 中添加 ENABLE_SNAP_STORE = true 以启用 Snap Store 发布
+      ENABLE_SNAP_STORE: ${{ vars.ENABLE_SNAP_STORE || 'false' }}
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -132,10 +175,28 @@ jobs:
             dist/**/**/*.rpm
             dist/**/**/*.AppImage
           body_path: ./.github/doc/DownloadDescription.md
+      # Snap Store：构建 snap 并发布到 GitHub Release；配置 SNAPCRAFT_TOKEN 后自动推送到 Snap Store
+      - name: Install Snapcraft
+        run: sudo snap install snapcraft --classic
+      - name: Build Snap package
+        run: cd snap && snapcraft
+      - name: Release Snap to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: snap/*.snap
+          body_path: ./.github/doc/DownloadDescription.md
+      - name: Publish to Snap Store
+        if: env.ENABLE_SNAP_STORE == 'true'
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
+        run: cd snap && snapcraft upload --release=stable *.snap
 
   macos:
     name: MacOS
     runs-on: macos-latest
+    env:
+      ENABLE_APP_STORE: ${{ vars.ENABLE_APP_STORE || 'false' }}
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -162,6 +223,9 @@ jobs:
   windows:
     name: Windows
     runs-on: windows-latest
+    env:
+      # 在仓库 Settings → Variables 中添加 ENABLE_MICROSOFT_STORE = true 以启用 Microsoft Store 发布
+      ENABLE_MICROSOFT_STORE: ${{ vars.ENABLE_MICROSOFT_STORE || 'false' }}
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -181,6 +245,11 @@ jobs:
             windows-release.zip
           body_path: ./.github/doc/DownloadDescription.md
       - run: dart run msix:create
+      - name: Get MSIX filename
+        id: msix
+        run: |
+          $f = Get-ChildItem build\windows\x64\runner\Release\*.msix | Select-Object -First 1
+          echo "name=$($f.Name)" >> $env:GITHUB_OUTPUT
       - name: Release windows msix
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
@@ -188,6 +257,29 @@ jobs:
           files: |
             build/windows/x64/runner/Release/*.msix
           body_path: ./.github/doc/DownloadDescription.md
+      # Microsoft Store 提交（需在 Partner Center 创建应用并配置下方 Secrets）
+      - name: Configure Microsoft Store credentials
+        if: env.ENABLE_MICROSOFT_STORE == 'true'
+        uses: microsoft/store-submission@v1
+        with:
+          command: configure
+          type: win32
+          seller-id: ${{ secrets.MS_STORE_SELLER_ID }}
+          product-id: ${{ secrets.MS_STORE_PRODUCT_ID }}
+          tenant-id: ${{ secrets.MS_STORE_TENANT_ID }}
+          client-id: ${{ secrets.MS_STORE_CLIENT_ID }}
+          client-secret: ${{ secrets.MS_STORE_CLIENT_SECRET }}
+      - name: Update Microsoft Store draft with MSIX
+        if: env.ENABLE_MICROSOFT_STORE == 'true'
+        uses: microsoft/store-submission@v1
+        with:
+          command: update
+          product-update: '{"packages":[{"packageUrl":"https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/${{ steps.msix.outputs.name }}","languages":["en"],"architectures":["X64"]}]}'
+      - name: Publish to Microsoft Store
+        if: env.ENABLE_MICROSOFT_STORE == 'true'
+        uses: microsoft/store-submission@v1
+        with:
+          command: publish
       - name: Building the installer
         run: |
           "%programfiles(x86)%\Inno Setup 6\iscc.exe" "windows-setup.iss"
