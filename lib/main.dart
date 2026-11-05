@@ -149,6 +149,18 @@ class _MyAppState extends State<MyApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
+      localeListResolutionCallback: (locales, supported) {
+        if (locales != null) {
+          for (final locale in locales) {
+            for (final candidate in supported) {
+              if (candidate.languageCode == locale.languageCode) {
+                return candidate;
+              }
+            }
+          }
+        }
+        return const Locale('en');
+      },
       locale: _overrideLocale,
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       home: const ReaderHomePage(),
